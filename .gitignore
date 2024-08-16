@@ -1,0 +1,4 @@
+src/*
+!src/ict_auth.py
+!src/setup.sh
+ict_auth.run
