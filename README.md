@@ -1,6 +1,6 @@
 # ICT Auth
 
-ICT Internet Authentication without GUI.
+ICT Internet Authentication without GUI support.
 
 ## Target machine requirements
 
@@ -28,4 +28,24 @@ ICT Internet Authentication without GUI.
    ```
    ./ict_auth.run
    ```
+
+4. (Optional) If you don't want to decompress every time, you can choose to install it locally (default: ~/.local/ict_auth).
+
+   ```
+   ./ict_auth.run -- install
+   ```
+
+   And then execute by
+
+   ```
+   ict_auth
+   ```
+
+   or uninstall it by
+
+   ```
+   ict_auth uninstall
+   ```
+
+   
 
