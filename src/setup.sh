@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Checking dependencies..."
+
 packages=(
     python3-pip
     libnss3
@@ -46,4 +48,4 @@ if ! python3 -m pip list 2>/dev/null | grep -F selenium >/dev/null 2>&1; then
     python3 -m pip install --no-index --find-links=$(pwd)/wheel selenium
 fi
 
-python3 ict_auth.py
+python3 $(realpath "$(dirname "$0")")/ict_auth.py

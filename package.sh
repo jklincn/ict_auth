@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
-sudo apt install python3-pip makeself
+# install pip and makeself
+sudo apt-get install python3-pip makeself
 
 # install selenium
-pip install selenium
+python3 -m pip install selenium
 
 # get binary file
 version="127.0.6533.119"
@@ -19,9 +20,9 @@ $selenium_manager \
     --avoid-stats \
     --debug
 
-# get wheel file
-mkdir src/wheel
-pip download -d src/wheel \
+# get wheel file, compatible with python3.8
+mkdir -p src/wheel
+python3 -m pip download -d src/wheel \
     --platform manylinux1_x86_64 \
     --python-version 38 \
     --implementation cp \
@@ -30,6 +31,6 @@ pip download -d src/wheel \
     selenium
 
 # make run file
-makeself --nox11 --xz src ict_auth.run "ICT Internet Authentication without GUI" ./setup.sh
+makeself --crc --nox11 --xz src ict_auth.run "ICT Internet Authentication without GUI" ./setup.sh
 
 chmod +x ./ict_auth.run

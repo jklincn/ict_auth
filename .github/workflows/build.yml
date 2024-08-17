@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  
+
 jobs:
   build-and-release:
     runs-on: ubuntu-20.04
@@ -17,7 +17,7 @@ jobs:
 
       - name: Build
         run: |
-          bash ./pack.sh
+          ./package.sh
 
       - name: Release
         id: create_release

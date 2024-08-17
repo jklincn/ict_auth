@@ -1,9 +1,10 @@
-import os
 import getpass
 import json
+import os
+
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
 
 if __name__ == "__main__":
     path = os.path.dirname(os.path.abspath(__file__))
@@ -23,40 +24,47 @@ if __name__ == "__main__":
     )
 
     driver = webdriver.Chrome(options=options, service=service)
+    driver.implicitly_wait(5)
 
     try:
-        print("============== ICT Connect ==============")
+        print("Checking if logged in...")
         driver.get("https://gw.ict.ac.cn")
-        driver.implicitly_wait(10)
-        driver.find_element(By.CSS_SELECTOR, "#logout.btn-logout")
-        print("You are already logged in. Good luck!")
+        btn_logout = driver.find_element(By.CSS_SELECTOR, "#logout.btn-logout")
+        if_logout = input("You are already logged in. Do you want to logout? [y/N] ")
+        if if_logout.lower() == "y":
+            driver.execute_script("arguments[0].scrollIntoView(true);", btn_logout)
+            btn_logout.click()
+            confirm_button = driver.find_element(By.CSS_SELECTOR, ".btn-confirm")
+            confirm_button.click()
+            driver.find_element(By.CSS_SELECTOR, "#login-account.btn-login")
+            print("Logout succeeded")
 
     except NoSuchElementException:
+        print("Starting login...")
         ict_username = input("ict_username: ")
         ict_password = getpass.getpass("ict_password: ")
 
-        print("Starting login...", end="")
+        try:
+            username = driver.find_element(By.CSS_SELECTOR, "#username.input-box")
+            username.send_keys(ict_username)
+            password = driver.find_element(By.CSS_SELECTOR, "#password.input-box")
+            password.send_keys(ict_password)
 
-        username = driver.find_element(By.CSS_SELECTOR, "#username.input-box")
-        username.send_keys(ict_username)
-        password = driver.find_element(By.CSS_SELECTOR, "#password.input-box")
-        password.send_keys(ict_password)
+            btn_login = driver.find_element(By.CSS_SELECTOR, "#login-account.btn-login")
+            driver.execute_script("arguments[0].scrollIntoView(true);", btn_login)
+            btn_login.click()
+            username = driver.find_element(By.CSS_SELECTOR, "#username.value").text
+            usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
+            usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
+            ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
+            print("\nLogin succeeded")
 
-        butten_login = driver.find_element(By.CSS_SELECTOR, "#login-account.btn-login")
-        driver.execute_script("arguments[0].scrollIntoView(true);", butten_login)
-        butten_login.click()
-        driver.implicitly_wait(10)
-        username = driver.find_element(By.CSS_SELECTOR, "#username.value").text
-        usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
-        usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
-        ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
-        print("Succeed")
-
-        print(f"Username: {username}")
-        print(f"Used flow: {usedflow}")
-        print(f"Used time: {usedtime}")
-        print(f"IP address: {ipv4}")
+            print(f"Username: {username}")
+            print(f"Used flow: {usedflow}")
+            print(f"Used time: {usedtime}")
+            print(f"IP address: {ipv4}")
+        except NoSuchElementException as e:
+            print(f"Internal error: {e}")
 
     finally:
-        print("=========================================")
         driver.quit()
