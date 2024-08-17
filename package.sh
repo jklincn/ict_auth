@@ -31,6 +31,6 @@ python3 -m pip download -d src/wheel \
     selenium
 
 # make run file
-makeself --crc --nox11 --xz src ict_auth.run "ICT Internet Authentication without GUI" ./setup.sh
+makeself --nox11 --xz src ict_auth.run "ICT Internet Authentication without GUI" ./setup.sh
 
 chmod +x ./ict_auth.run
