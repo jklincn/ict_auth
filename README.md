@@ -9,20 +9,23 @@ ICT Internet Authentication without GUI.
 
 ## Get started
 
-There are two ways to obtain ICT Auth. 
+1. Get the runfile. There are two ways to get ICT Auth runfile. 
 
-1. Download the pre-packaged run file from the [release](https://github.com/jklincn/ict_auth/releases) page.
+   - (Recommended) Download the pre-packaged runfile from the [release](https://github.com/jklincn/ict_auth/releases) page.
 
-2. Package it yourself on a machine with network access.
+   - Package it yourself.
+
+     ```
+     git clone https://github.com/jklincn/ict_auth.git
+     cd ict_auth
+     ./package.sh
+     ```
+
+2. Transfer runfile to the target machine. You can use SCP or a USB drive.
+
+3. Execute runfile on target machine.
 
    ```
-   git clone https://github.com/jklincn/ict_auth.git
-   cd ict_auth
-   ./package.sh
+   ./ict_auth.run
    ```
 
-Once you have the run file, you can use SCP or a USB drive to transfer it to the target machine and then execute it.
-
-```
-./ict_auth.run
-```
