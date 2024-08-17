@@ -28,6 +28,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: ict_auth.run
-          name: "${GITHUB_REF#refs/tags/}"
           token: ${{ secrets.GITHUB_TOKEN }}
           make_latest: true
