@@ -32,12 +32,15 @@ if __name__ == "__main__":
         btn_logout = driver.find_element(By.CSS_SELECTOR, "#logout.btn-logout")
         if_logout = input("You are already logged in. Do you want to logout? [y/N] ")
         if if_logout.lower() == "y":
-            driver.execute_script("arguments[0].scrollIntoView(true);", btn_logout)
-            btn_logout.click()
-            confirm_button = driver.find_element(By.CSS_SELECTOR, ".btn-confirm")
-            confirm_button.click()
-            driver.find_element(By.CSS_SELECTOR, "#login-account.btn-login")
-            print("Logout succeeded")
+            try:
+                driver.execute_script("arguments[0].scrollIntoView(true);", btn_logout)
+                btn_logout.click()
+                confirm_button = driver.find_element(By.CSS_SELECTOR, ".btn-confirm")
+                confirm_button.click()
+                driver.find_element(By.CSS_SELECTOR, "#login-account.btn-login")
+                print("Logout succeeded")
+            except BaseException as e:
+                print(f"Logout Internal error: {e}")
 
     except NoSuchElementException:
         print("Starting login...")
@@ -63,8 +66,8 @@ if __name__ == "__main__":
             print(f"Used flow: {usedflow}")
             print(f"Used time: {usedtime}")
             print(f"IP address: {ipv4}")
-        except NoSuchElementException as e:
-            print(f"Internal error: {e}")
+        except BaseException as e:
+            print(f"Login Internal error: {e}")
 
     finally:
         driver.quit()
