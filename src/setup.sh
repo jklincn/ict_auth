@@ -65,7 +65,8 @@ else
             echo "Installation of missing packages aborted."
             exit 0
         fi
-
+    fi
+    
     if ! python3 -m pip list 2>/dev/null | grep -F selenium >/dev/null 2>&1; then
         echo "selenium is not installed. Installing selenium..."
         python3 -m pip install --no-index --find-links="$ROOT_DIR/wheel" selenium
