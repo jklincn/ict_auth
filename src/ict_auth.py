@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     options = webdriver.ChromeOptions()
     options.binary_location = f"{path}/chrome/linux64/{version}/chrome"
-    options.add_argument("--headless=new")
+    options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
 
