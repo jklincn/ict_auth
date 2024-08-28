@@ -26,6 +26,7 @@ ICT Internet Authentication without GUI support.
 3. Execute runfile on target machine.
 
    ```
+   chmod +x ict_auth.run
    ./ict_auth.run
    ```
 
