@@ -44,26 +44,27 @@ else
         libxkbcommon0
     )
 
-    need_install=false
+    missing_packages=()
 
     for pkg in "${packages[@]}"; do
         if ! dpkg -s "$pkg" >/dev/null 2>&1; then
-            need_install=true
-            break
+            missing_packages+=("$pkg")
         fi
     done
 
-    if [ "$need_install" = true ]; then
-        echo "Updating package lists..."
-        sudo apt-get update
-
-        for pkg in "${packages[@]}"; do
-            if ! dpkg -s "$pkg" >/dev/null 2>&1; then
-                echo "Installing $pkg..."
-                sudo apt-get install -y "$pkg"
-            fi
-        done
-    fi
+    if [ ${#missing_packages[@]} -gt 0 ]; then
+        echo "Missing packages detected: ${missing_packages[*]}"
+        read -p "Do you want to install these packages? (Y/n): " choice
+        choice=${choice:-y}
+        if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
+            echo "Updating package lists..."
+            sudo apt-get update
+            echo "Installing missing packages: ${missing_packages[*]}"
+            sudo apt-get install -y "${missing_packages[@]}"
+        else
+            echo "Installation of missing packages aborted."
+            exit 0
+        fi
 
     if ! python3 -m pip list 2>/dev/null | grep -F selenium >/dev/null 2>&1; then
         echo "selenium is not installed. Installing selenium..."
