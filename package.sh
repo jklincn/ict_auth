@@ -8,7 +8,7 @@ sudo apt-get install python3-pip makeself
 python3 -m pip install selenium
 
 # get binary file
-version="127.0.6533.119"
+version="125.0.6422.141"
 selenium_manager="$(python3 -m site --user-site)/selenium/webdriver/common/linux/selenium-manager"
 $selenium_manager \
     --browser chrome \
