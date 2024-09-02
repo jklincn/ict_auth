@@ -42,6 +42,7 @@ else
         libxshmfence1
         libgbm1
         libxkbcommon0
+        libatk-bridge2.0-0
     )
 
     missing_packages=()

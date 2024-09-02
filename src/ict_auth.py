@@ -15,10 +15,9 @@ if __name__ == "__main__":
 
     options = webdriver.ChromeOptions()
     options.binary_location = f"{path}/chrome/linux64/{version}/chrome"
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    options.add_argument(f"--user-data-dir=/tmp/ict_auth")
 
     service = webdriver.ChromeService(
         executable_path=f"{path}/chromedriver/linux64/{version}/chromedriver"
@@ -44,7 +43,7 @@ if __name__ == "__main__":
                 print(f"Logout Internal error: {e}")
 
     except NoSuchElementException:
-        print("Starting login...")
+        print("Starting login...\n")
         ict_username = input("ict_username: ")
         ict_password = getpass.getpass("ict_password: ")
 
