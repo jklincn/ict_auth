@@ -23,20 +23,14 @@ ICT Internet Authentication without GUI support.
 
 2. Transfer runfile to the target machine. You can use SCP or a USB drive.
 
-3. Execute runfile on target machine.
+3. Install ICT Auth on target machine.
 
    ```
    chmod +x ict_auth.run
    ./ict_auth.run
    ```
 
-4. (Optional) If you don't want to decompress every time, you can choose to install it locally (default: ~/.local/ict_auth).
-
-   ```
-   ./ict_auth.run -- install
-   ```
-
-   And then execute by
+4. After installation, you can use ict_auth to log in
 
    ```
    ict_auth
@@ -48,5 +42,5 @@ ICT Internet Authentication without GUI support.
    ict_auth uninstall
    ```
 
-   
+    (You may need `export PATH=$PATH:/usr/local/bin` first)
 

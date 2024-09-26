@@ -24,8 +24,9 @@ if __name__ == "__main__":
     )
 
     driver = webdriver.Chrome(options=options, service=service)
-    driver.implicitly_wait(5)
-
+    driver.set_page_load_timeout(3)
+    driver.implicitly_wait(3)
+    
     try:
         print("Checking if logged in...")
         driver.get("https://gw.ict.ac.cn")
@@ -41,13 +42,16 @@ if __name__ == "__main__":
                 print("Logout succeeded")
             except BaseException as e:
                 print(f"Logout Internal error: {e}")
-
+    except KeyboardInterrupt:
+        print(f"\nReceived KeyboardInterrupt. Abort.")
     except NoSuchElementException:
-        print("Starting login...\n")
-        ict_username = input("ict_username: ")
-        ict_password = getpass.getpass("ict_password: ")
-
         try:
+            print("Starting login...")
+            print("=============================")
+            ict_username = input("ict_username: ")
+            ict_password = getpass.getpass("ict_password: ")
+            print("=============================")
+
             username = driver.find_element(By.CSS_SELECTOR, "#username.input-box")
             username.send_keys(ict_username)
             password = driver.find_element(By.CSS_SELECTOR, "#password.input-box")
@@ -60,14 +64,15 @@ if __name__ == "__main__":
             usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
             usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
             ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
-            print("\nLogin succeeded")
-
+            print("Login succeeded")
             print(f"Username: {username}")
             print(f"Used flow: {usedflow}")
             print(f"Used time: {usedtime}")
             print(f"IP address: {ipv4}")
+        except KeyboardInterrupt:
+            print(f"\nReceived KeyboardInterrupt. Abort.")
         except BaseException as e:
-            print(f"Login Internal error: {e}")
+            print(f"Login error: {e}")
 
     finally:
         driver.quit()

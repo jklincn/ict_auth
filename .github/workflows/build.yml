@@ -21,6 +21,9 @@ jobs:
       - name: Build
         run: |
           ./package.sh
+          chmod +x ./ict_auth.run
+          echo "y" | ./ict_auth.run
+          python3 test.py
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')
