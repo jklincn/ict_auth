@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-VERSION="2024-09-27"
 BIN_DIR="$HOME/.local/bin"
 INSTALL_DIR="$HOME/.local/ict_auth"
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
@@ -65,9 +64,10 @@ function check_deps(){
 
 function show_help() {
     echo "Usage:"
-    echo "  ict_auth            Start Internet authentication"
-    echo "  ict_auth uninstall  Uninstall ict_auth from the system"
-    echo "  ict_auth version    Print version information"
+    echo "  ict_auth              Start Internet authentication"
+    echo "  ict_auth --help       Show help message"
+    echo "  ict_auth --uninstall  Uninstall ict_auth from the system"
+    echo "  ict_auth --version    Print version information"
 }
 
 # Install
@@ -83,18 +83,28 @@ if [ ! -d "$INSTALL_DIR" ]; then
     exit 0
 fi
 
-if [ -z "$1" ]; then
-    check_deps
-    python3 "$INSTALL_DIR/ict_auth.py"
-else
-    if [ "$1" == "uninstall" ]; then
+case "$1" in
+    "") 
+        check_deps
+        python3 "$INSTALL_DIR/ict_auth.py"
+        ;;
+    "--help") 
+        show_help
+        ;;
+    "--uninstall") 
         rm -f "$BIN_DIR/ict_auth"
         rm -rf "$INSTALL_DIR"
         echo "ict_auth uninstalled successfully"
-    elif [ "$1" == "version" ]; then
-        echo "$VERSION"
-    else
+        ;;
+    "--version")
+        if [ -f "$FILE" ]; then
+            cat "$INSTALL_DIR"/version.txt
+        else
+            echo "Self-Building"
+        fi
+        ;;
+    *) 
         echo "Unknown argument: $1"
         show_help
-    fi
-fi
+        ;;
+esac

@@ -1,3 +1,6 @@
+# This file is used in GitHub actions to detect script errors
+# and can also be used by users for self-testing
+
 from pathlib import Path
 import json
 

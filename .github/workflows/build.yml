@@ -18,9 +18,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Get commit info
+        run: |
+          COMMIT_ID=$(git rev-parse --short HEAD)
+          COMMIT_DATE=$(git log -1 --format=%cd --date=format:'%Y-%m-%d')
+          echo "Built on $COMMIT_DATE (commit $COMMIT_ID)" > src/version.txt
+
       - name: Build
         run: |
           ./package.sh
+
+      - name: Test
+        run: |
           chmod +x ./ict_auth.run
           echo "y" | ./ict_auth.run
           python3 test.py
@@ -30,6 +39,10 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: "build-${{ github.sha }}-${{ github.run_date }}"
+          release_name: "${COMMIT_DATE}"
+          body: |
+            This release was created on ${COMMIT_DATE} with the commit ID ${COMMIT_ID}.
           files: ict_auth.run
           token: ${{ secrets.GITHUB_TOKEN }}
           make_latest: true
