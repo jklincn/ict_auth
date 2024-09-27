@@ -39,8 +39,6 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "build-${{ github.sha }}-${{ github.run_date }}"
-          release_name: "${COMMIT_DATE}"
           body: |
             This release was created on ${COMMIT_DATE} with the commit ID ${COMMIT_ID}.
           files: ict_auth.run
