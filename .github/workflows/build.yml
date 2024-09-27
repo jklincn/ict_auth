@@ -39,8 +39,6 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          body: |
-            This release was created on ${COMMIT_DATE} with the commit ID ${COMMIT_ID}.
           files: ict_auth.run
           token: ${{ secrets.GITHUB_TOKEN }}
           make_latest: true
