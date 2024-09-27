@@ -77,7 +77,7 @@ if [ ! -d "$INSTALL_DIR" ]; then
     cp -r "$SCRIPT_DIR"/* "$INSTALL_DIR/"
     ln -sf "$INSTALL_DIR/setup.sh" "$BIN_DIR/ict_auth"
     if [[ ":$PATH:" != *":$BIN_DIR:"* ]]; then
-        echo "WARNING: $BIN_DIR is not in your PATH. You may need to add it."
+        echo -e "\e[33mWARNING: $BIN_DIR is not in your PATH. Please re-login to apply the changes.\e[0m"
     fi
     echo "ict_auth successfully installed in $INSTALL_DIR"
     exit 0
@@ -97,7 +97,7 @@ case "$1" in
         echo "ict_auth uninstalled successfully"
         ;;
     "--version")
-        if [ -f "$FILE" ]; then
+        if [ -f "$INSTALL_DIR"/version.txt ]; then
             cat "$INSTALL_DIR"/version.txt
         else
             echo "Self-Building"
