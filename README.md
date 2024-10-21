@@ -42,5 +42,5 @@ ICT Internet Authentication without GUI support.
    ict_auth uninstall
    ```
 
-    (You may need `export PATH=$PATH:/usr/local/bin` first)
+    (You may need `export PATH=/usr/local/bin:$PATH` first)
 
