@@ -11,7 +11,7 @@
 
 1. 获取安装包，目前有两种方法：
 
-   - **（推荐）** 从[发布](https://github.com/jklincn/ict_auth/releases)下载预打包的。
+   - **（推荐）** 从[发布](https://github.com/jklincn/ict_auth/releases)下载预制作的安装包（ict_auth.run）
 
    - 在其他联网的机器中自行制作：
 
@@ -32,7 +32,7 @@
 
    默认安装路径为 `~/.local/ict_auth`，暂不支持更改。
 
-   - 如果 `~/.local/bin` 不在 `PATH` 中，可以重新登陆使其自动添加或者手动修改 PATH 。
+   - 如果 `~/.local/bin` 不在 `PATH` 中，可以重新登陆使其自动添加或者手动修改 `PATH` 。
    - 或直接使用 `~/.local/bin/ict_auth` 来运行。
 
 ## 使用
