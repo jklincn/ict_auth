@@ -63,7 +63,7 @@ if [ ! -d "$INSTALL_DIR" ]; then
 
     if [ ${#missing_packages[@]} -gt 0 ]; then
         echo "Missing packages: ${missing_packages[*]}"
-        read -p "Do you want to install these packages? (Y/n): " choice
+        read -p "Do you want to install these packages? [Y/n] " choice
         choice=${choice:-y}
         if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
             echo "Updating package lists..."
