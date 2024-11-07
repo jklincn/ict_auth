@@ -25,11 +25,7 @@ def get_driver() -> WebDriver:
         executable_path=f"{path}/chromedriver/linux64/{version}/chromedriver"
     )
 
-    try:
-        driver = webdriver.Chrome(options=options, service=service)
-    except Exception as e:
-        raise RuntimeError("[ERROR] Failed to initialize WebDriver") from e
-
+    driver = webdriver.Chrome(options=options, service=service)
     driver.set_page_load_timeout(2)
     driver.implicitly_wait(2)
 
@@ -45,16 +41,31 @@ def check_login(driver: WebDriver) -> bool:
         return False
 
 
-def logout(driver: WebDriver):
+def _logout(driver: WebDriver):
     btn_logout = driver.find_element(By.CSS_SELECTOR, "#logout.btn-logout")
+    driver.execute_script("arguments[0].scrollIntoView(true);", btn_logout)
+    btn_logout.click()
+    confirm_button = driver.find_element(By.CSS_SELECTOR, ".btn-confirm")
+    confirm_button.click()
+
+
+def logout(driver: WebDriver):
     if_logout = input("[INFO] You are already logged in. Do you want to logout? [y/N] ")
     if if_logout.lower() == "y":
-        driver.execute_script("arguments[0].scrollIntoView(true);", btn_logout)
-        btn_logout.click()
-        confirm_button = driver.find_element(By.CSS_SELECTOR, ".btn-confirm")
-        confirm_button.click()
+        _logout(driver)
         driver.find_element(By.CSS_SELECTOR, "#login-account.btn-login")
         print("[INFO] Logout succeeded")
+
+
+def _login(driver: WebDriver, ict_username: str, ict_password: str):
+    username = driver.find_element(By.CSS_SELECTOR, "#username.input-box")
+    username.send_keys(ict_username)
+    password = driver.find_element(By.CSS_SELECTOR, "#password.input-box")
+    password.send_keys(ict_password)
+
+    btn_login = driver.find_element(By.CSS_SELECTOR, "#login-account.btn-login")
+    driver.execute_script("arguments[0].scrollIntoView(true);", btn_login)
+    btn_login.click()
 
 
 def login(driver: WebDriver):
@@ -65,14 +76,7 @@ def login(driver: WebDriver):
     ict_password = getpass.getpass("ICT Password: ")
     print("=============================")
 
-    username = driver.find_element(By.CSS_SELECTOR, "#username.input-box")
-    username.send_keys(ict_username)
-    password = driver.find_element(By.CSS_SELECTOR, "#password.input-box")
-    password.send_keys(ict_password)
-
-    btn_login = driver.find_element(By.CSS_SELECTOR, "#login-account.btn-login")
-    driver.execute_script("arguments[0].scrollIntoView(true);", btn_login)
-    btn_login.click()
+    _login(driver, ict_username, ict_password)
 
     # print user info
     try:
@@ -109,17 +113,17 @@ def show_debug_info():
 
 if __name__ == "__main__":
 
-    driver = get_driver()
-
     try:
+        driver = get_driver()
         print("[INFO] Checking if logged in...")
         if check_login(driver):
             logout(driver)
         else:
             login(driver)
     except KeyboardInterrupt:
+        print()
         exit(0)
-    except Exception as e:
+    except Exception:
         print(
             "\n[INTERNAL ERROR] An internal error has occurred. Please contact the developer and provide the information below."
         )

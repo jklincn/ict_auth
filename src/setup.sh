@@ -15,6 +15,9 @@ function show_help() {
     echo "Usage:"
     echo "  ict_auth              Start Internet authentication"
     echo "  ict_auth --help       Show help message"
+    echo "  ict_auth --enable     Enable and start the persistent connection service"
+    echo "  ict_auth --disable    Disable the persistent connection service."
+    echo "  ict_auth --log        View the logs for the persistent connection service."
     echo "  ict_auth --uninstall  Uninstall ict_auth from the system"
     echo "  ict_auth --version    Print version information"
 }
@@ -96,6 +99,92 @@ if [ ! -d "$INSTALL_DIR" ]; then
     exit 0
 fi
 
+
+function service_enable() {
+    if systemctl list-timers | grep -q "ict_auth.timer"; then
+        echo "[INFO] Persistent connection service has been enabled."
+    else
+        echo "[INFO] Starting persistent connection service..."
+        echo "============================="
+        read -p "ICT Username: " ICT_USERNAME
+        read -sp "ICT Password: " ICT_PASSWORD
+        echo
+        echo "============================="
+        echo "[INFO] Verifying account..."
+
+        source "$VENV_DIR/bin/activate"
+        ICT_USERNAME=$ICT_USERNAME ICT_PASSWORD=$ICT_PASSWORD python3 "$INSTALL_DIR/service.py" --check
+        
+        if [ $? -ne 0 ]; then
+            echo "[ERROR] Account verification failed."
+            exit 1
+        fi    
+
+        echo "ICT_USERNAME=$ICT_USERNAME" > "$INSTALL_DIR/.env"
+        echo "ICT_PASSWORD=$ICT_PASSWORD" >> "$INSTALL_DIR/.env"
+        chmod 600 "$INSTALL_DIR/.env"
+
+        VERSION=$(cat "$INSTALL_DIR/version.txt")
+        USER="$USER"
+        GROUP=$(id -gn $USER)
+
+        TIMER_CONTENT="[Unit]
+Description=ICT Auth Timer - $VERSION
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1min
+
+[Install]
+WantedBy=timers.target"
+
+        SERVICE_CONTENT="[Unit]
+Description=ICT Auth Service - $VERSION
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'source $VENV_DIR/bin/activate && python3 $INSTALL_DIR/service.py'
+User=$USER
+Group=$GROUP
+EnvironmentFile=$INSTALL_DIR/.env
+
+[Install]
+WantedBy=multi-user.target"
+
+        echo "$TIMER_CONTENT" | sudo tee "/etc/systemd/system/ict_auth.timer" > /dev/null
+        echo "$SERVICE_CONTENT" | sudo tee "/etc/systemd/system/ict_auth.service" > /dev/null
+
+        sudo systemctl daemon-reload
+        sudo systemctl start ict_auth.timer
+        sudo systemctl enable ict_auth.timer
+
+        echo "[INFO] Persistent connection service started successfully."
+    fi
+}
+
+function service_disable() {
+    if systemctl list-timers | grep -q "ict_auth.timer"; then
+        echo "[INFO] Stopping persistent connection service..."
+        
+        sudo systemctl stop ict_auth.timer
+        sudo systemctl disable ict_auth.timer
+
+        sudo systemctl stop ict_auth.service
+        sudo systemctl disable ict_auth.service
+
+        sudo rm -f "/etc/systemd/system/ict_auth.service"
+        sudo rm -f "/etc/systemd/system/ict_auth.timer"
+
+        sudo systemctl daemon-reload
+
+        rm -f "$INSTALL_DIR/.env"
+
+        echo "[INFO] Persistent connection service stopped successfully."
+    fi
+}
+
+
 case "$1" in
     "") 
         source "$VENV_DIR/bin/activate"
@@ -104,7 +193,17 @@ case "$1" in
     "--help") 
         show_help
         ;;
+    "--enable")
+        service_enable
+        ;;
+    "--disable")
+        service_disable
+        ;;
+    "--log")
+        journalctl -u ict_auth.service | grep "bash"
+        ;;
     "--uninstall") 
+        service_disable
         rm -f "$BIN_DIR/ict_auth"
         rm -rf "$INSTALL_DIR"
         echo "[INFO] ict_auth uninstalled successfully"

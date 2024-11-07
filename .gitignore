@@ -1,4 +1,6 @@
-src/*
-!src/ict_auth.py
-!src/setup.sh
+src/chrome*
+src/wheel
+src/se-metadata.json
+src/version.txt
+
 ict_auth.run
