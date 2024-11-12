@@ -181,6 +181,8 @@ function service_disable() {
         rm -f "$INSTALL_DIR/.env"
 
         echo "[INFO] Persistent connection service stopped successfully."
+    else
+        echo "[INFO] Persistent connection service has not been enabled."
     fi
 }
 
