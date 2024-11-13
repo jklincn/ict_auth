@@ -204,7 +204,9 @@ case "$1" in
         journalctl -u ict_auth.service | grep "bash"
         ;;
     "--uninstall") 
-        service_disable
+        if systemctl list-timers | grep -q "ict_auth.timer"; then
+            service_disable
+        fi
         rm -f "$BIN_DIR/ict_auth"
         rm -rf "$INSTALL_DIR"
         echo "[INFO] ict_auth uninstalled successfully"

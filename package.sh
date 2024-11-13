@@ -2,7 +2,7 @@
 set -e
 
 # install pip and makeself
-sudo apt-get install python3-pip makeself
+sudo apt-get install python3-pip makeself pigz
 
 # install selenium
 python3 -m pip install selenium
@@ -37,4 +37,10 @@ else
     VERSION="self-build"
     echo "$VERSION" > src/version.txt
 fi
-makeself --nox11 --xz src ict_auth.run "ICT Auth - ${VERSION}" ./setup.sh
+
+if [[ "$VERSION" == "self-build" ]]; then
+    # local develop, --pigz will be faster 
+    makeself --nox11 --pigz src ict_auth.run "ICT Auth - ${VERSION}" ./setup.sh
+else
+    makeself --nox11 --xz src ict_auth.run "ICT Auth - ${VERSION}" ./setup.sh
+fi

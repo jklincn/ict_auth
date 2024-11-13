@@ -1,6 +1,5 @@
 import os
 import sys
-import time
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -18,16 +17,14 @@ if __name__ == "__main__":
         if "--check" in sys.argv:
             if check_login(driver):
                 _logout(driver)
-                time.sleep(1)
-                if check_login(driver):
-                    raise # bug
-                _login(driver, ict_username, ict_password)
-                try:
-                    driver.find_element(By.CSS_SELECTOR, "#username.value")
-                    print("[INFO] Account verification successful.")
-                except NoSuchElementException:
-                    print("[ERROR] Account verification failed.")
-                    exit(1)
+            _login(driver, ict_username, ict_password)
+            try:
+                driver.find_element(By.CSS_SELECTOR, "#username.value")
+                print("[INFO] Account verification successful.")
+            except NoSuchElementException:
+                print("[ERROR] Account verification failed.")
+                print("[ERROR] You can manually logout first and then try again.")
+                exit(1)
         else:
             if not check_login(driver):
                 print(
