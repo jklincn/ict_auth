@@ -116,7 +116,6 @@ function service_enable() {
         ICT_USERNAME=$ICT_USERNAME ICT_PASSWORD=$ICT_PASSWORD python3 "$INSTALL_DIR/service.py" --check
         
         if [ $? -ne 0 ]; then
-            echo "[ERROR] Account verification failed."
             exit 1
         fi    
 
