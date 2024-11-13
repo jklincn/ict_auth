@@ -148,11 +148,26 @@ User=$USER
 Group=$GROUP
 EnvironmentFile=$INSTALL_DIR/.env
 
+ExecStartPost=sudo systemctl restart frpc.service
+
+[Install]
+WantedBy=multi-user.target"
+
+        FRPC_CONTENT="[Unit]
+Description=frpc Service
+
+[Service]
+Type=simple
+ExecStart=/home/lin/frp_0.61.0_linux_OK/frp_0.61.0_linux_amd64/frpc -c /home/lin/frp_0.61.0_linux_OK/frp_0.61.0_linux_amd64/frpc.ini
+User=root
+Group=root
+
 [Install]
 WantedBy=multi-user.target"
 
         echo "$TIMER_CONTENT" | sudo tee "/etc/systemd/system/ict_auth.timer" > /dev/null
         echo "$SERVICE_CONTENT" | sudo tee "/etc/systemd/system/ict_auth.service" > /dev/null
+        echo "$FRPC_CONTENT" | sudo tee "/etc/systemd/system/frpc.service" > /dev/null
 
         sudo systemctl daemon-reload
         sudo systemctl start ict_auth.timer
@@ -172,8 +187,11 @@ function service_disable() {
         sudo systemctl stop ict_auth.service
         sudo systemctl disable ict_auth.service
 
+        sudo systemctl stop frpc.service
+
         sudo rm -f "/etc/systemd/system/ict_auth.service"
         sudo rm -f "/etc/systemd/system/ict_auth.timer"
+        sudo rm -f "/etc/systemd/system/frpc.service"
 
         sudo systemctl daemon-reload
 
