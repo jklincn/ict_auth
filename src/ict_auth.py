@@ -3,9 +3,13 @@ import json
 import os
 
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
+
+
+class NetworkError(Exception):
+    pass
 
 
 def get_driver() -> WebDriver:
@@ -26,17 +30,19 @@ def get_driver() -> WebDriver:
     )
 
     driver = webdriver.Chrome(options=options, service=service)
-    driver.set_page_load_timeout(2)
+    driver.set_page_load_timeout(5)
     driver.implicitly_wait(2)
 
     return driver
 
 
 def check_login(driver: WebDriver) -> bool:
-    driver.get("https://gw.ict.ac.cn")
     try:
+        driver.get("https://gw.ict.ac.cn")
         driver.find_element(By.CSS_SELECTOR, "#logout.btn-logout")
         return True
+    except TimeoutException:
+        raise NetworkError
     except NoSuchElementException:
         return False
 
@@ -122,7 +128,10 @@ if __name__ == "__main__":
             login(driver)
     except KeyboardInterrupt:
         print()
-        exit(0)
+    except NetworkError:
+        print(
+            '[ERROR] Unable to access "https://gw.ict.ac.cn". Please check your network connection and try again.'
+        )
     except Exception:
         print(
             "\n[INTERNAL ERROR] An internal error has occurred. Please contact the developer and provide the information below."
