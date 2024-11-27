@@ -106,12 +106,12 @@ function service_enable() {
     else
         echo "[INFO] Starting persistent connection service..."
         echo "============================="
-        read -p "ICT Username: " ICT_USERNAME
-        read -sp "ICT Password: " ICT_PASSWORD
+        read -ep "ICT Username: " ICT_USERNAME
+        read -esp "ICT Password: " ICT_PASSWORD
         echo
         echo "============================="
-        echo "[INFO] Verifying account..."
 
+        echo "[INFO] Verifying account..."
         source "$VENV_DIR/bin/activate"
         ICT_USERNAME=$ICT_USERNAME ICT_PASSWORD=$ICT_PASSWORD python3 "$INSTALL_DIR/service.py" --check
         
