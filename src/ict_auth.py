@@ -1,5 +1,4 @@
 import getpass
-import json
 import os
 
 from selenium import webdriver
@@ -15,9 +14,8 @@ class NetworkError(Exception):
 def get_driver() -> WebDriver:
     path = os.path.dirname(os.path.abspath(__file__))
 
-    with open(f"{path}/se-metadata.json", "r") as file:
-        data = json.load(file)
-    version = data["browsers"][0]["browser_version"]
+    with open(f"{path}/browser_version.txt", "r") as file:
+        version = file.readline().strip()
 
     options = webdriver.ChromeOptions()
     options.binary_location = f"{path}/chrome/linux64/{version}/chrome"

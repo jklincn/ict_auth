@@ -2,15 +2,13 @@
 # and can also be used by users for self-testing
 
 from pathlib import Path
-import json
 
 from selenium import webdriver
 
 path = Path.home() / ".local/ict_auth"
 
-with open(f"{path}/se-metadata.json", "r") as file:
-    data = json.load(file)
-version = data["browsers"][0]["browser_version"]
+with open(f"{path}/browser_version.txt", "r") as file:
+    version = file.readline().strip()
 
 options = webdriver.ChromeOptions()
 options.binary_location = f"{path}/chrome/linux64/{version}/chrome"
