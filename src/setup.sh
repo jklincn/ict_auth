@@ -106,12 +106,12 @@ function service_enable() {
     else
         echo "[INFO] Starting persistent connection service..."
         echo "============================="
-        read -p "ICT Username: " ICT_USERNAME
-        read -sp "ICT Password: " ICT_PASSWORD
+        read -ep "ICT Username: " ICT_USERNAME
+        read -esp "ICT Password: " ICT_PASSWORD
         echo
         echo "============================="
-        echo "[INFO] Verifying account..."
 
+        echo "[INFO] Verifying account..."
         source "$VENV_DIR/bin/activate"
         ICT_USERNAME=$ICT_USERNAME ICT_PASSWORD=$ICT_PASSWORD python3 "$INSTALL_DIR/service.py" --check
         
@@ -122,6 +122,9 @@ function service_enable() {
         echo "ICT_USERNAME=$ICT_USERNAME" > "$INSTALL_DIR/.env"
         echo "ICT_PASSWORD=$ICT_PASSWORD" >> "$INSTALL_DIR/.env"
         chmod 600 "$INSTALL_DIR/.env"
+        echo "============================="
+        read -ep "Frpc Start Command (use absolute path!!): " FRPC_COMMAND
+        echo "============================="
 
         VERSION=$(cat "$INSTALL_DIR/version.txt")
         USER="$USER"
@@ -158,7 +161,7 @@ Description=frpc Service
 
 [Service]
 Type=simple
-ExecStart=/home/lin/frp_0.61.0_linux_OK/frp_0.61.0_linux_amd64/frpc -c /home/lin/frp_0.61.0_linux_OK/frp_0.61.0_linux_amd64/frpc.ini
+ExecStart=$FRPC_COMMAND
 User=root
 Group=root
 

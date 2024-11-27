@@ -5,7 +5,7 @@ set -e
 sudo apt-get install python3-pip makeself pigz
 
 # install selenium
-python3 -m pip install selenium
+python3 -m pip install -U selenium
 
 # get binary file
 version="125.0.6422.141"
@@ -42,5 +42,6 @@ if [[ "$VERSION" == "self-build" ]]; then
     # local develop, --pigz will be faster 
     makeself --nox11 --pigz src ict_auth.run "ICT Auth - ${VERSION}" ./setup.sh
 else
+    # github release, --xz will reduce size
     makeself --nox11 --xz src ict_auth.run "ICT Auth - ${VERSION}" ./setup.sh
 fi
