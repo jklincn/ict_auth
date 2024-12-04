@@ -2,7 +2,11 @@ import getpass
 import os
 
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    TimeoutException,
+    WebDriverException,
+)
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
@@ -39,7 +43,7 @@ def check_login(driver: WebDriver) -> bool:
         driver.get("https://gw.ict.ac.cn")
         driver.find_element(By.CSS_SELECTOR, "#logout.btn-logout")
         return True
-    except TimeoutException:
+    except (TimeoutException, WebDriverException):
         raise NetworkError
     except NoSuchElementException:
         return False
