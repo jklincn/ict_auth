@@ -117,7 +117,7 @@ function service_enable() {
         
         if [ $? -ne 0 ]; then
             exit 1
-        fi    
+        fi
 
         echo "ICT_USERNAME=$ICT_USERNAME" > "$INSTALL_DIR/.env"
         echo "ICT_PASSWORD=$ICT_PASSWORD" >> "$INSTALL_DIR/.env"
@@ -173,6 +173,9 @@ WantedBy=multi-user.target"
         sudo systemctl daemon-reload
         sudo systemctl start ict_auth.timer
         sudo systemctl enable ict_auth.timer
+
+        echo "[INFO] Start frpc service. Try 'systemctl status frpc.service' to get information."
+        sudo systemctl start frpc.service
 
         echo "[INFO] Persistent connection service started successfully."
     fi

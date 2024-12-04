@@ -37,7 +37,7 @@ if __name__ == "__main__":
             try:
                 driver.find_element(By.CSS_SELECTOR, "#username.value")
                 print("[INFO] Account verification successful.")
-                restart_frpc()
+
             except NoSuchElementException:
                 print("[ERROR] Account verification failed.")
                 print("[ERROR] You can manually logout first and then try again.")
