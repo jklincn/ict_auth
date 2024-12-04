@@ -174,7 +174,7 @@ WantedBy=multi-user.target"
         sudo systemctl start ict_auth.timer
         sudo systemctl enable ict_auth.timer
 
-        echo "[INFO] Start frpc service. Try 'systemctl status frpc.service' to get information."
+        echo "[INFO] Start frpc service. Try 'journalctl -u frpc' to get information."
         sudo systemctl start frpc.service
 
         echo "[INFO] Persistent connection service started successfully."
