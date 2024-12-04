@@ -151,8 +151,6 @@ User=$USER
 Group=$GROUP
 EnvironmentFile=$INSTALL_DIR/.env
 
-ExecStartPost=sudo systemctl restart frpc.service
-
 [Install]
 WantedBy=multi-user.target"
 

@@ -1,10 +1,26 @@
 import os
+import subprocess
 import sys
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 from ict_auth import _login, _logout, check_login, get_driver, show_debug_info
+
+
+def restart_frpc():
+    try:
+        result = subprocess.run(
+            ["sudo", "systemctl", "restart", "frpc.service"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(e.stderr)
+        exit(1)
+
 
 if __name__ == "__main__":
 
@@ -21,6 +37,7 @@ if __name__ == "__main__":
             try:
                 driver.find_element(By.CSS_SELECTOR, "#username.value")
                 print("[INFO] Account verification successful.")
+                restart_frpc()
             except NoSuchElementException:
                 print("[ERROR] Account verification failed.")
                 print("[ERROR] You can manually logout first and then try again.")
@@ -41,6 +58,7 @@ if __name__ == "__main__":
                 print(f"[INFO] Used flow: {usedflow}")
                 print(f"[INFO] Used time: {usedtime}")
                 print(f"[INFO] IP address: {ipv4}")
+                restart_frpc()
 
     except Exception:
         print(
