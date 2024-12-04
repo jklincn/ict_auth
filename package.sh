@@ -9,6 +9,7 @@ python3 -m pip install -U selenium
 
 # get binary file
 version="125.0.6422.141"
+echo "$version" > src/browser_version.txt
 selenium_manager="$(python3 -c "import sys; print([p for p in sys.path if 'site-packages' in p][0] + '/selenium/webdriver/common/linux/selenium-manager')")"
 $selenium_manager \
     --browser chrome \

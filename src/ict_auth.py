@@ -1,9 +1,12 @@
 import getpass
-import json
 import os
 
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    TimeoutException,
+    WebDriverException,
+)
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
@@ -15,9 +18,8 @@ class NetworkError(Exception):
 def get_driver() -> WebDriver:
     path = os.path.dirname(os.path.abspath(__file__))
 
-    with open(f"{path}/se-metadata.json", "r") as file:
-        data = json.load(file)
-    version = data["browsers"][0]["browser_version"]
+    with open(f"{path}/browser_version.txt", "r") as file:
+        version = file.readline().strip()
 
     options = webdriver.ChromeOptions()
     options.binary_location = f"{path}/chrome/linux64/{version}/chrome"
@@ -41,7 +43,7 @@ def check_login(driver: WebDriver) -> bool:
         driver.get("https://gw.ict.ac.cn")
         driver.find_element(By.CSS_SELECTOR, "#logout.btn-logout")
         return True
-    except TimeoutException:
+    except (TimeoutException, WebDriverException):
         raise NetworkError
     except NoSuchElementException:
         return False
