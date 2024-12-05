@@ -4,7 +4,7 @@ import sys
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
-from ict_auth import _login, _logout, check_login, get_driver, show_debug_info
+from ict_auth import NetworkError, _login, _logout, check_login, get_driver, show_debug_info
 
 if __name__ == "__main__":
 
@@ -41,7 +41,10 @@ if __name__ == "__main__":
                 print(f"[INFO] Used flow: {usedflow}")
                 print(f"[INFO] Used time: {usedtime}")
                 print(f"[INFO] IP address: {ipv4}")
-
+    except NetworkError:
+        print(
+            '[ERROR] Unable to access "https://gw.ict.ac.cn". Please check your network connection and try again.'
+        )
     except Exception:
         print(
             "\n[INTERNAL ERROR] An internal error has occurred. Please contact the developer and provide the information below."

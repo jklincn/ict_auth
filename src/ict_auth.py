@@ -1,11 +1,10 @@
 import getpass
 import os
-
+import sys
 from selenium import webdriver
 from selenium.common.exceptions import (
     NoSuchElementException,
     TimeoutException,
-    WebDriverException,
 )
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
@@ -43,7 +42,7 @@ def check_login(driver: WebDriver) -> bool:
         driver.get("https://gw.ict.ac.cn")
         driver.find_element(By.CSS_SELECTOR, "#logout.btn-logout")
         return True
-    except (TimeoutException):
+    except TimeoutException:
         raise NetworkError
     except NoSuchElementException:
         return False
@@ -58,11 +57,9 @@ def _logout(driver: WebDriver):
 
 
 def logout(driver: WebDriver):
-    if_logout = input("[INFO] You are already logged in. Do you want to logout? [y/N] ")
-    if if_logout.lower() == "y":
-        _logout(driver)
-        driver.find_element(By.CSS_SELECTOR, "#login-account.btn-login")
-        print("[INFO] Logout succeeded")
+    _logout(driver)
+    driver.find_element(By.CSS_SELECTOR, "#login-account.btn-login")
+    print("[INFO] Logout succeeded.")
 
 
 def _login(driver: WebDriver, ict_username: str, ict_password: str):
@@ -92,21 +89,25 @@ def login(driver: WebDriver):
         usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
         usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
         ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
-        print("[INFO] Login succeeded")
+        print("[INFO] Login succeeded.")
         print(f"[INFO] Username: {username}")
         print(f"[INFO] Used flow: {usedflow}")
         print(f"[INFO] Used time: {usedtime}")
         print(f"[INFO] IP address: {ipv4}")
     except NoSuchElementException:
-        print("[ERROR] Incorrect username or password")
+        print("[ERROR] Incorrect username or password.")
 
 
 def show_debug_info():
     import platform
 
     path = os.path.dirname(os.path.abspath(__file__))
-    with open(f"{path}/version.txt", "r") as file:
-        my_version = file.read().strip()
+    try:
+        with open(f"{path}/release.txt", "r") as file:
+            my_version = file.read().strip()
+    except FileNotFoundError:
+        with open(f"{path}/self-build.txt", "r") as file:
+            my_version = file.read().strip()
     try:
         with open("/etc/os-release", "r") as f:
             for line in f:
@@ -120,14 +121,24 @@ def show_debug_info():
 
 
 if __name__ == "__main__":
-
     try:
+        arg = sys.argv
+        if len(arg) != 2:
+            raise Exception("len(arg) != 2")
         driver = get_driver()
         print("[INFO] Checking if logged in...")
-        if check_login(driver):
-            logout(driver)
-        else:
-            login(driver)
+        is_logged_in = check_login(driver)
+        match arg[1]:
+            case "login":
+                if is_logged_in:
+                    print("[INFO] You are already logged in.")
+                else:
+                    login(driver)
+            case "logout":
+                if is_logged_in:
+                    logout(driver)
+                else:
+                    print("[ERROR] You are not logged in.")
     except KeyboardInterrupt:
         print()
     except NetworkError:

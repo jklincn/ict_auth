@@ -35,14 +35,14 @@ done
 if [[ -f "src/release.txt" ]]; then
     VERSION=$(cat src/release.txt)
 else
-    VERSION="self-build ($(date +%Y-%m-%d))"
-    echo "$VERSION" > src/.self-build
+    VERSION="self-build ($(date +"%Y-%m-%d %H:%M:%S"))"
+    echo "$VERSION" > src/self-build.txt
 fi
 
 if [[ "$VERSION" == self-build* ]]; then
     # local develop, --pigz will be faster 
-    makeself --nox11 --pigz src ict_auth.run "ICT Auth - ${VERSION}" ./setup.sh
+    makeself --nox11 --pigz src ict_auth.run "ICT Auth - ${VERSION}" ./install.sh
 else
     # github release, --xz will reduce size
-    makeself --nox11 --xz src ict_auth.run "ICT Auth - ${VERSION}" ./setup.sh
+    makeself --nox11 --xz src ict_auth.run "ICT Auth - ${VERSION}" ./install.sh
 fi

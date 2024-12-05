@@ -37,17 +37,17 @@
 
 ### 登陆
 
-运行 ict_auth 直接进行上网认证登陆，输入自己的账号密码回车即可。
+使用 `login` 命令进行上网认证登陆，需要输入自己的账号密码。
 
 ```
-$ ict_auth
+$ ict_auth login
 [INFO] Checking if logged in...
 [INFO] Starting login process...
 =============================
 ICT Username: aaabbbccc
 ICT Password: 
 =============================
-[INFO] Login succeeded
+[INFO] Login succeeded.
 [INFO] Username: aaabbbccc
 [INFO] Used flow: 33.42 GB
 [INFO] Used time: 13小时8分11秒
@@ -56,23 +56,22 @@ ICT Password:
 
 ### 退出
 
-在已登录的情况下，再次运行 ict_auth 会提示是否要退出，输入 y 进行退出。
+使用 `logout` 命令进行退出。
 
 ```
-$ ict_auth
+$ ict_auth logout
 [INFO] Checking if logged in...
-[INFO] You are already logged in. Do you want to logout? [y/N] y
-[INFO] Logout succeeded
+[INFO] Logout succeeded.
 ```
 
-### 持久连接
+### 持久连接 (Beta)
 
-据观察，所里的网络时常自动断开，可以使用 `--enable` 将 ict_auth 注册为系统后台服务，持续检测上网认证状态。如果发现网络断开，则自动进行登陆。默认检测频率是每分钟一次。
+据观察，所里的网络时常自动断开，可以使用 `enable` 将 ict_auth 注册为系统后台服务，持续检测上网认证状态。如果发现网络断开，则自动进行登陆。默认检测频率是每分钟一次。
 
 **注意：这会在本地明文保存账号与密码，存在账号安全隐患（待优化）**
 
 ```
-$ ict_auth --enable
+$ ict_auth enable
 [INFO] Starting persistent connection service...
 =============================
 ICT Username: aaabbbccc
@@ -84,60 +83,65 @@ Created symlink /etc/systemd/system/timers.target.wants/ict_auth.timer → /etc/
 [INFO] Persistent connection service started successfully.
 ```
 
-取消持久连接（这会卸载系统服务并清空账号信息）
+使用 `disable` 取消持久连接（这会卸载系统服务并清空账号信息）
 
 ```
-$ ict_auth --disable
+$ ict_auth disable
 [INFO] Stopping persistent connection service...
 Removed /etc/systemd/system/timers.target.wants/ict_auth.timer.
 [INFO] Persistent connection service stopped successfully.
 ```
 
-查看持久连接日志
+使用 `logs` 查看持久连接日志
 
 ```
-$ ict_auth --log
-Nov 07 08:02:21 603-1 bash[546277]: [INFO] Connection interruption detected. Logging in automatically.
-Nov 07 08:02:21 603-1 bash[546277]: [INFO] Username: aaabbbccc
-Nov 07 08:02:21 603-1 bash[546277]: [INFO] Used flow: 3.42 GB
-Nov 07 08:02:21 603-1 bash[546277]: [INFO] Used time: 24小时16分42秒
-Nov 07 08:02:21 603-1 bash[546277]: [INFO] IP address: 10.xxx.xxx.xxx
-Nov 07 08:21:23 603-1 bash[552090]: [INFO] Connection interruption detected. Logging in automatically.
-Nov 07 08:21:23 603-1 bash[552090]: [INFO] Username: aaabbbccc
-Nov 07 08:21:23 603-1 bash[552090]: [INFO] Used flow: 3.55 GB
-Nov 07 08:21:23 603-1 bash[552090]: [INFO] Used time: 24小时35分29秒
-Nov 07 08:21:23 603-1 bash[552090]: [INFO] IP address: 10.xxx.xxx.xxx
+$ ict_auth logs
+Dec 05 12:10:29 abc bash[344289]: [INFO] Connection interruption detected. Logging in automatically.
+Dec 05 12:10:29 abc bash[344289]: [INFO] Username: aaabbbccc
+Dec 05 12:10:29 abc bash[344289]: [INFO] Used flow: 3.55 GB
+Dec 05 12:10:29 abc bash[344289]: [INFO] Used time: 24小时35分29秒
+Dec 05 12:10:29 abc bash[344289]: [INFO] IP address: 10.xxx.xxx.xxx
 ```
 
 ### 卸载
 
-这会删除 ict_auth 相关的所有文件，包括持久连接服务和使用 venv 创建的虚拟环境。
+使用 `uninstall` 可以删除 ict_auth 相关的所有文件，包括持久连接服务和使用 venv 创建的虚拟环境。
 
 ```
-$ ict_auth --uninstall
+$ ict_auth uninstall
 [INFO] ict_auth uninstalled successfully
 ```
 
 ### 帮助
 
-更多命令可以使用 help 查看
+更多命令可以使用 `-h` 或 `--help` 查看
 
 ```
 $ ict_auth --help
-Usage:
-  ict_auth              Start Internet authentication
-  ict_auth --help       Show help message
-  ict_auth --enable     Enable and start the persistent connection service
-  ict_auth --disable    Disable the persistent connection service.
-  ict_auth --log        View the logs for the persistent connection service.
-  ict_auth --uninstall  Uninstall ict_auth from the system
-  ict_auth --version    Print version information
+Usage: ict_auth [OPTIONS] COMMAND
+
+A command-line tool for ICT network authentication.
+
+Options:
+  -h, --help          Show this help message and exit
+  -V, --version       Show version information and exit
+
+Commands:
+  login               Log in to the ICT network
+  logout              Log out and terminate the session
+  enable              Enable and start the persistent connection service
+  disable             Disable the persistent connection service
+  logs                Show logs for the persistent connection service
+  uninstall           Uninstall ict_auth from the system
 ```
 
-## 权限说明
+## 管理员权限说明
 
-setup.sh 脚本中的 sudo 权限用于：
+install.sh 脚本中的 sudo 权限用于：
 
 - 程序安装过程中进行 deb 包的安装（apt-get 命令）
+
+entry.sh 脚本中的 sudo 权限用于：
+
 - 开启持久连接时写入 /etc/systemd 文件夹（包括 systemctl 命令）
 - 取消持久连接时写入 /etc/systemd 文件夹（包括 systemctl 命令）
