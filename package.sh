@@ -31,15 +31,15 @@ for version in 3.8 3.9 3.10 3.11 3.12; do
         selenium
 done
 
-# make run file
-if [[ -f src/version.txt ]]; then
-    VERSION=$(cat src/version.txt)
+# Make run file
+if [[ -f "src/release.txt" ]]; then
+    VERSION=$(cat src/release.txt)
 else
-    VERSION="self-build"
-    echo "$VERSION" > src/version.txt
+    VERSION="self-build ($(date +%Y-%m-%d))"
+    echo "$VERSION" > src/.self-build
 fi
 
-if [[ "$VERSION" == "self-build" ]]; then
+if [[ "$VERSION" == self-build* ]]; then
     # local develop, --pigz will be faster 
     makeself --nox11 --pigz src ict_auth.run "ICT Auth - ${VERSION}" ./setup.sh
 else

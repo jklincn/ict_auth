@@ -1,7 +1,7 @@
 src/chrome*
 src/wheel
 src/se-metadata.json
-src/version.txt
+src/.self-build
 src/browser_version.txt
 
 ict_auth.run

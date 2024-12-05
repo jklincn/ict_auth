@@ -24,7 +24,7 @@ function show_help() {
 
 # Install
 if [ ! -d "$INSTALL_DIR" ]; then
-    echo "[INFO] Installing..."
+    echo "[INFO] Installing ict_auth..."
 
     mkdir -p "$INSTALL_DIR" "$BIN_DIR"
     cp -r "$SCRIPT_DIR"/* "$INSTALL_DIR/"
@@ -62,7 +62,7 @@ if [ ! -d "$INSTALL_DIR" ]; then
     done
 
     if [ ${#missing_packages[@]} -gt 0 ]; then
-        echo "Missing packages: ${missing_packages[*]}"
+        echo "[INFO] Missing packages: ${missing_packages[*]}"
         read -p "Do you want to install these packages? [Y/n] " choice
         choice=${choice:-y}
         if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
@@ -98,7 +98,6 @@ if [ ! -d "$INSTALL_DIR" ]; then
     echo "[INFO] ict_auth successfully installed in $INSTALL_DIR"
     exit 0
 fi
-
 
 function service_enable() {
     if systemctl list-timers | grep -q "ict_auth.timer"; then
@@ -212,7 +211,11 @@ case "$1" in
         echo "[INFO] ict_auth uninstalled successfully"
         ;;
     "--version")
-        cat "$INSTALL_DIR/version.txt"
+        if [[ -f "$INSTALL_DIR/release.txt" ]]; then
+            cat "$INSTALL_DIR/release.txt"
+        else
+            cat "$INSTALL_DIR/.self-build"
+        fi
         ;;
     *) 
         echo "Unknown argument: $1"
