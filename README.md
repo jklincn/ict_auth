@@ -109,7 +109,7 @@ Dec 05 12:10:29 abc bash[344289]: [INFO] IP address: 10.xxx.xxx.xxx
 
 ```
 $ ict_auth uninstall
-[INFO] ict_auth uninstalled successfully
+[INFO] ict_auth uninstalled successfully.
 ```
 
 ### 帮助

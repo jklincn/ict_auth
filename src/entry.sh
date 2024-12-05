@@ -147,7 +147,7 @@ case "$1" in
         fi
         rm -f "$BIN_DIR/ict_auth"
         rm -rf "$INSTALL_DIR"
-        echo "[INFO] ict_auth uninstalled successfully"
+        echo "[INFO] ict_auth uninstalled successfully."
         ;;
     *) 
         echo "[ERROR] Unknown command: $1"
