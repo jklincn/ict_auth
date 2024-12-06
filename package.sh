@@ -46,3 +46,5 @@ else
     # github release, --xz will reduce size
     makeself --nox11 --xz src ict_auth.run "ICT Auth - ${VERSION}" ./install.sh
 fi
+
+chmod +x ict_auth.run
