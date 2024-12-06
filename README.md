@@ -11,26 +11,13 @@
 
 ## 安装
 
-1. 获取安装包，目前有两种方法：
+复制并执行以下命令
 
-   - **（推荐）** 从[发布](https://github.com/jklincn/ict_auth/releases)下载预制作的安装包（ict_auth.run）
+```
+curl -sSf -o /tmp/ict_auth.run https://oss.jklincn.com/ict_auth.run && chmod +x /tmp/ict_auth.run && /tmp/ict_auth.run
+```
 
-   - 在其他联网的机器中自行制作：
-
-     ```
-     git clone https://github.com/jklincn/ict_auth.git
-     cd ict_auth
-     ./package.sh
-     ```
-
-2. 将安装包拷贝到目标机器，可以使用 scp 或者 U 盘等方法。
-
-3. 在目标机器上安装，这会安装所需的 deb 包（通过网络），然后使用 venv 创建虚拟环境，在虚拟环境中安装所需的 whl 包（通过本地文件）。
-
-   ```
-   chmod +x ict_auth.run
-   ./ict_auth.run
-   ```
+这会通过 ipv6 网络下载安装包并进行安装。
 
 
 ## 使用
