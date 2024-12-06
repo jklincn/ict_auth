@@ -99,7 +99,12 @@ function install() {
 if [ ! -d "$INSTALL_DIR" ]; then
     install
 else
-    read -p "[INFO] ict_auth is already installed on this system. Would you like to overwrite it? [Y/n]" choice
+    if [[ -f "$INSTALL_DIR/release.txt" ]]; then
+        VERSION=$(cat $INSTALL_DIR/release.txt)
+    else
+        VERSION=$(cat $INSTALL_DIR/self-build.txt)
+    fi    
+    read -p "[INFO] ICT Auth (version: $VERSION) is already installed on this system. Would you like to overwrite it? [Y/n]" choice
     choice=${choice:-y}
     if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
         "$BIN_DIR/ict_auth" uninstall
