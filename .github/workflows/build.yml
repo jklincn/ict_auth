@@ -25,7 +25,7 @@ jobs:
 
       - name: Build
         run: |
-          ./package.sh
+          ./build.sh
 
       - name: Test
         run: |
