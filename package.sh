@@ -35,7 +35,7 @@ done
 if [[ -f "src/release.txt" ]]; then
     VERSION=$(cat src/release.txt)
 else
-    VERSION="self-build ($(date +"%Y-%m-%d %H:%M:%S"))"
+    VERSION="self-build $(date +"%Y-%m-%d %H:%M:%S")"
     echo "$VERSION" > src/self-build.txt
 fi
 

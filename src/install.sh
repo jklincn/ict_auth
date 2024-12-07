@@ -104,8 +104,8 @@ else
     else
         VERSION=$(cat $INSTALL_DIR/self-build.txt)
     fi    
-    read -p "[INFO] ICT Auth (version: $VERSION) is already installed on this system. Would you like to overwrite it? [Y/n]" choice
-    choice=${choice:-y}
+    read -p "[INFO] ICT Auth (version: $VERSION) is already installed on this system. Would you like to overwrite it? [y/N]" choice
+    choice=${choice:-n}
     if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
         "$BIN_DIR/ict_auth" uninstall
         install

@@ -11,10 +11,8 @@
 
 ## 安装
 
-复制并执行以下命令
-
 ```
-curl -sSf -o /tmp/ict_auth.run https://oss.jklincn.com/ict_auth.run && chmod +x /tmp/ict_auth.run && /tmp/ict_auth.run
+curl -sSf https://oss.jklincn.com/ict_auth.sh | sh
 ```
 
 这会通过 ipv6 网络下载安装包并进行安装。
