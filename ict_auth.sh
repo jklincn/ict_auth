@@ -11,7 +11,7 @@ err() {
 
 # Download the installer
 echo "[INFO] Downloading ICT Auth installer..."
-if ! curl -f --progress-bar -o /tmp/ict_auth.run https://oss.jklincn.com/ict_auth.run; then
+if ! curl -f --progress-bar -o /tmp/ict_auth.run https://oss.jklincn.com/ict_auth/ict_auth.run; then
     err "Failed to download installer"
 fi
 
