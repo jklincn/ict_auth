@@ -21,16 +21,6 @@ $selenium_manager \
     --avoid-stats \
     --debug
 
-# get wheel file, compatible with python3.8
-mkdir -p src/wheel
-for version in 3.10 3.11 3.12 3.13 3.14; do
-    python3 -m pip download -d src/wheel \
-        --platform manylinux2014_x86_64 \
-        --python-version $version \
-        --only-binary=:all: \
-        selenium
-done
-
 # Make run file
 if [[ -f "src/release.txt" ]]; then
     VERSION=$(cat src/release.txt)

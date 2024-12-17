@@ -26,6 +26,9 @@ jobs:
       - name: Build
         run: |
           ./build.sh
+          mkdir ict_auth
+          mv ict_auth.run ict_auth/
+          cp src/release.txt ict_auth/
 
       - name: Test
         run: |
@@ -37,7 +40,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: ict_auth.run
+          files: ict_auth/ict_auth.run
           token: ${{ secrets.GITHUB_TOKEN }}
           make_latest: true
 
@@ -49,5 +52,4 @@ jobs:
           r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           r2-bucket: ${{ secrets.R2_BUCKET }}
-          source-dir: ict_auth.run
-          destination-dir: ./
+          source-dir: ict_auth
