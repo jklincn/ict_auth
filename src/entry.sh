@@ -130,7 +130,7 @@ function upgrade() {
     if [[ -f "$install_dir/release.txt" ]]; then
         current=$(cat "$install_dir/release.txt")
         if [[ $latest == $current ]]; then
-            echo "[INFO] You are already using the latest version: $current."
+            echo "[INFO] The current version is already the latest version."
             return
         fi
     fi
