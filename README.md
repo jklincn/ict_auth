@@ -4,10 +4,10 @@
 
 ## 前提
 
-- 系统自带的 Python 版本 >= 3.10（例如 Ubuntu 22.04 或更高版本）
+- 系统自带的 Python 版本 >= 3.8（例如 Ubuntu 20.04 或更高版本）
 - 可以通过网线获得正常的内网 ipv4 地址以及 ipv6 地址
 
-暂时仅支持 Ubuntu 发行版（仅在 Ubuntu 22.04 LTS 上测试过）
+暂时仅支持 Ubuntu 发行版（仅在 Ubuntu 20.04/22.04 LTS 上测试过）
 
 ## 安装
 
@@ -46,6 +46,26 @@ ICT Password:
 $ ict_auth logout
 [INFO] Checking if logged in...
 [INFO] Logout succeeded.
+```
+
+### 当前状态
+
+使用 `status` 命令查看当前状态。
+
+```
+# 已登陆状态
+$ ict_auth status
+[INFO] Checking if logged in...
+[INFO] Status: Online
+[INFO] Username: aaabbbccc
+[INFO] Used flow: 33.42 GB
+[INFO] Used time: 13小时8分11秒
+[INFO] IP address: 10.xxx.xxx.xxx
+
+# 未登录状态
+$ ict_auth status
+[INFO] Checking if logged in...
+[INFO] Status: Offline
 ```
 
 ### 持久连接 (Beta)
@@ -87,6 +107,27 @@ Dec 05 12:10:29 abc bash[344289]: [INFO] Used time: 24小时35分29秒
 Dec 05 12:10:29 abc bash[344289]: [INFO] IP address: 10.xxx.xxx.xxx
 ```
 
+### 更新
+
+当软件有可用更新时，会自动提醒
+
+```
+$ ict_auth
+[INFO] A new version (2024-12-17) has been detected. You can use "ict_auth upgrade" to upgrade.
+```
+
+使用 `upgrade` 命令进行更新
+
+```
+$ ict_auth upgrade
+[INFO] Starting the upgrade...
+######################################################### 100.0%
+Verifying archive integrity...  100%   MD5 checksums are OK. All good.
+Uncompressing ICT Auth - 2024-12-17  100%
+[INFO] ict_auth successfully installed in /home/lin/.local/ict_auth
+[INFO] Upgrade completed successfully.
+```
+
 ### 卸载
 
 使用 `uninstall` 可以删除 ict_auth 相关的所有文件，包括持久连接服务和使用 venv 创建的虚拟环境。
@@ -113,9 +154,11 @@ Options:
 Commands:
   login               Log in to the ICT network
   logout              Log out and terminate the session
+  status              Show the current login status
   enable              Enable and start the persistent connection service
   disable             Disable the persistent connection service
   logs                Show logs for the persistent connection service
+  upgrade             Check for updates and install the latest version
   uninstall           Uninstall ict_auth from the system
 ```
 
