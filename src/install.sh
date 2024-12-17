@@ -107,8 +107,8 @@ else
     read -p "[INFO] ICT Auth (version: $version) is already installed on this system. Would you like to overwrite it? [y/N]" choice
     choice=${choice:-n}
     if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
-        "$bin_dir/ict_auth" uninstall
-        install
+        cp -r "$script_dir"/* "$install_dir/"
+        echo "[INFO] ict_auth successfully installed in $install_dir"
     else
         echo "[INFO] Exit."
     fi
