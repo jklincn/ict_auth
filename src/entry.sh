@@ -22,6 +22,7 @@ function show_help() {
     echo "Commands:"
     echo "  login               Log in to the ICT network"
     echo "  logout              Log out and terminate the session"
+    echo "  status              Show the current login status"
     echo "  enable              Enable and start the persistent connection service"
     echo "  disable             Disable the persistent connection service"
     echo "  logs                Show logs for the persistent connection service"
@@ -170,6 +171,10 @@ case "$1" in
     "logout")
         source "$venv_dir/bin/activate"
         python3 "$install_dir/ict_auth.py" logout
+        ;;
+    "status")
+        source "$venv_dir/bin/activate"
+        python3 "$install_dir/ict_auth.py" status
         ;;
     "enable")
         service_enable

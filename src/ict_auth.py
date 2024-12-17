@@ -128,17 +128,31 @@ if __name__ == "__main__":
         driver = get_driver()
         print("[INFO] Checking if logged in...")
         is_logged_in = check_login(driver)
-        match arg[1]:
-            case "login":
-                if is_logged_in:
-                    print("[INFO] You are already logged in.")
-                else:
-                    login(driver)
-            case "logout":
-                if is_logged_in:
-                    logout(driver)
-                else:
-                    print("[ERROR] You are not logged in.")
+
+        if arg[1] == "login":
+            if is_logged_in:
+                print("[INFO] You are already logged in.")
+            else:
+                login(driver)
+        elif arg[1] == "logout":
+            if is_logged_in:
+                logout(driver)
+            else:
+                print("[ERROR] You are not logged in.")       
+        elif arg[1] == "status":
+            if is_logged_in:
+                username = driver.find_element(By.CSS_SELECTOR, "#username.value").text
+                usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
+                usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
+                ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text                
+                print("[INFO] Status: " + "\033[32mOnline\033[0m")
+                print(f"[INFO] Username: {username}")
+                print(f"[INFO] Used flow: {usedflow}")
+                print(f"[INFO] Used time: {usedtime}")
+                print(f"[INFO] IP address: {ipv4}")
+            else:
+                print("[INFO] Status: " + "\033[31mOffline\033[0m")
+
     except KeyboardInterrupt:
         print()
     except NetworkError:
