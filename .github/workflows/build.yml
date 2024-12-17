@@ -27,7 +27,7 @@ jobs:
         run: |
           ./build.sh
           mkdir ict_auth
-          mv ict_auth.run ict_auth/
+          cp ict_auth.run ict_auth/
           cp src/release.txt ict_auth/
 
       - name: Test

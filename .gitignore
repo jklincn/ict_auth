@@ -1,5 +1,4 @@
 src/chrome*
-src/wheel
 src/se-metadata.json
 src/self-build.txt
 src/browser_version.txt
