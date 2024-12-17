@@ -120,7 +120,6 @@ function check_upgrade() {
         current=$(cat "$install_dir/release.txt")
         if [[ $latest != $current ]]; then
             echo "[INFO] A new version ($latest) has been detected. You can use \"ict_auth upgrade\" to upgrade."
-            echo
         fi
     fi
 }
@@ -134,6 +133,7 @@ function upgrade() {
             return
         fi
     fi
+    echo "[INFO] Starting the upgrade..."
     if ! curl -f --progress-bar -o /tmp/ict_auth.run https://oss.jklincn.com/ict_auth/ict_auth.run; then
         echo "[ERROR] Failed to download installer."
         exit 1
