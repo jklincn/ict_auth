@@ -1,0 +1,6 @@
+src/chrome*
+src/se-metadata.json
+src/self-build.txt
+src/browser_version.txt
+
+ict_auth.run
