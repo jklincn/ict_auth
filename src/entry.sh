@@ -149,7 +149,7 @@ function upgrade() {
 }
 
 # Avoid duplicate outputs during upgrade
-if [[ "$1" != "uninstall" || "$1" != "upgrade" ]]; then
+if [[ "$1" != "uninstall" && "$1" != "upgrade" ]]; then
     check_upgrade
 fi
 
