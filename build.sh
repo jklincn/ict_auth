@@ -23,7 +23,7 @@ $selenium_manager \
 
 # get wheel file, compatible with python3.8
 mkdir -p src/wheel
-for version in 3.8 3.9 3.10 3.11 3.12; do
+for version in 3.10 3.11 3.12 3.13 3.14; do
     python3 -m pip download -d src/wheel \
         --platform manylinux2014_x86_64 \
         --python-version $version \
