@@ -17,9 +17,8 @@ function cleanup() {
     exit 1
 }
 
-trap cleanup SIGINT
-
 function install() {
+    trap cleanup SIGINT
     echo "[INFO] Installing ICT Auth..."
 
     mkdir -p "$install_dir" "$bin_dir"
@@ -108,6 +107,10 @@ else
     choice=${choice:-n}
     if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
         cp -r "$script_dir"/* "$install_dir/"
+        if [ $? -ne 0 ]; then
+            echo "[ERROR] Failed to overwrite."
+            exit 1
+        fi
         echo "[INFO] ict_auth successfully installed in $install_dir"
     else
         echo "[INFO] Exit."

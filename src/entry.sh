@@ -31,7 +31,7 @@ function show_help() {
 }
 
 function service_enable() {
-    if systemctl list-timers | grep -q "ict_auth.timer"; then
+    if systemctl list-units | grep -q "ict_auth.service"; then
         echo "[INFO] Persistent connection service has been enabled."
     else
         echo "[INFO] Starting persistent connection service..."
@@ -46,8 +46,12 @@ function service_enable() {
         ICT_USERNAME=$ict_username ICT_PASSWORD=$ict_password python3 "$install_dir/service.py" --check
         
         if [ $? -ne 0 ]; then
+            echo "[ERROR] Account verification failed."
+            echo "[INFO] Please check your username and password and try again."
             exit 1
-        fi    
+        else
+            echo "[INFO] Account verified successfully."
+        fi
 
         echo "ICT_USERNAME=$ict_username" > "$install_dir/.env"
         echo "ICT_PASSWORD=$ict_password" >> "$install_dir/.env"
@@ -56,53 +60,47 @@ function service_enable() {
         user="$USER"
         group=$(id -gn $USER)
 
-        timer_content="[Unit]
-Description=ICT Auth Timer
-
-[Timer]
-OnBootSec=1min
-OnUnitActiveSec=1min
-
-[Install]
-WantedBy=timers.target"
-
         service_content="[Unit]
 Description=ICT Auth Service
 After=network.target
+StartLimitIntervalSec=21600
+StartLimitBurst=15
 
 [Service]
-Type=oneshot
-ExecStart=/bin/bash -c 'source $venv_dir/bin/activate && python3 $install_dir/service.py'
+Type=simple
+
 User=$user
 Group=$group
 EnvironmentFile=$install_dir/.env
 
+ExecStartPre=/bin/bash -c 'resolvectl flush-caches'
+ExecStart=/bin/bash -c 'source $venv_dir/bin/activate && python3 $install_dir/service.py'
+ExecStopPost=/bin/bash -c 'resolvectl flush-caches'
+
+Restart=on-failure
+RestartSec=20min
+
 [Install]
 WantedBy=multi-user.target"
 
-        echo "$timer_content" | $sudo tee "/etc/systemd/system/ict_auth.timer" > /dev/null
         echo "$service_content" | $sudo tee "/etc/systemd/system/ict_auth.service" > /dev/null
 
         $sudo systemctl daemon-reload
-        $sudo systemctl start ict_auth.timer
-        $sudo systemctl enable ict_auth.timer
+        $sudo systemctl start ict_auth.service
+        $sudo systemctl enable ict_auth.service
 
         echo "[INFO] Persistent connection service started successfully."
     fi
 }
 
 function service_disable() {
-    if systemctl list-timers | grep -q "ict_auth.timer"; then
+    if systemctl list-units | grep -q "ict_auth.service"; then
         echo "[INFO] Stopping persistent connection service..."
-        
-        $sudo systemctl stop ict_auth.timer
-        $sudo systemctl disable ict_auth.timer
 
         $sudo systemctl stop ict_auth.service
         $sudo systemctl disable ict_auth.service
 
         $sudo rm -f "/etc/systemd/system/ict_auth.service"
-        $sudo rm -f "/etc/systemd/system/ict_auth.timer"
 
         $sudo systemctl daemon-reload
 
@@ -131,9 +129,11 @@ function upgrade() {
         if [[ $latest == $current ]]; then
             echo "[INFO] The current version is already the latest version."
             return
+        else
+            echo "[INFO] Upgrading from $current to $latest..."
         fi
     fi
-    echo "[INFO] Starting the upgrade..."
+    echo "[INFO] Downloading installer..."
     if ! curl -f --progress-bar -o /tmp/ict_auth.run https://oss.jklincn.com/ict_auth/ict_auth.run; then
         echo "[ERROR] Failed to download installer."
         exit 1
@@ -183,13 +183,13 @@ case "$1" in
         service_disable
         ;;   
     "logs")
-        journalctl -u ict_auth.service | grep "bash"
+        less "$install_dir/service.log"
         ;;
     "upgrade")
         upgrade
         ;;
     "uninstall") 
-        if systemctl list-timers | grep -q "ict_auth.timer"; then
+        if systemctl list-units | grep -q "ict_auth.service"; then
             service_disable
         fi
         rm -f "$bin_dir/ict_auth"

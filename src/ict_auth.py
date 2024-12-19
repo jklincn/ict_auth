@@ -1,13 +1,13 @@
 import getpass
 import os
 import sys
+
 from selenium import webdriver
-from selenium.common.exceptions import (
-    NoSuchElementException,
-    TimeoutException,
-)
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
+
+URL = "https://gw.ict.ac.cn"
 
 
 class NetworkError(Exception):
@@ -39,11 +39,15 @@ def get_driver() -> WebDriver:
 
 def check_login(driver: WebDriver) -> bool:
     try:
-        driver.get("https://gw.ict.ac.cn")
+        driver.get(URL)
+    except Exception as e:
+        raise NetworkError(
+            f"[ERROR] Unable to access {URL}. Please check your network connection and try again.",
+            e,
+        ) from e
+    try:
         driver.find_element(By.CSS_SELECTOR, "#logout.btn-logout")
         return True
-    except TimeoutException:
-        raise NetworkError
     except NoSuchElementException:
         return False
 
@@ -138,13 +142,13 @@ if __name__ == "__main__":
             if is_logged_in:
                 logout(driver)
             else:
-                print("[ERROR] You are not logged in.")       
+                print("[ERROR] You are not logged in.")
         elif arg[1] == "status":
             if is_logged_in:
                 username = driver.find_element(By.CSS_SELECTOR, "#username.value").text
                 usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
                 usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
-                ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text                
+                ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
                 print("[INFO] Status: " + "\033[32mOnline\033[0m")
                 print(f"[INFO] Username: {username}")
                 print(f"[INFO] Used flow: {usedflow}")
@@ -156,9 +160,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print()
     except NetworkError:
-        print(
-            '[ERROR] Unable to access "https://gw.ict.ac.cn". Please check your network connection and try again.'
-        )
+        raise
     except Exception:
         print(
             "\n[INTERNAL ERROR] An internal error has occurred. Please contact the developer and provide the information below."

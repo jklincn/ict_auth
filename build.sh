@@ -23,18 +23,18 @@ $selenium_manager \
 
 # Make run file
 if [[ -f "src/release.txt" ]]; then
-    VERSION=$(cat src/release.txt)
+    version=$(cat src/release.txt)
 else
-    VERSION="self-build $(date +"%Y-%m-%d %H:%M:%S")"
-    echo "$VERSION" > src/self-build.txt
+    version="self-build $(date +"%Y-%m-%d %H:%M:%S")"
+    echo "$version" > src/self-build.txt
 fi
 
-if [[ "$VERSION" == self-build* ]]; then
+if [[ "$version" == self-build* ]]; then
     # local develop, --pigz will be faster 
-    makeself --nox11 --pigz src ict_auth.run "ICT Auth - ${VERSION}" ./install.sh
+    makeself --nox11 --pigz src ict_auth.run "ICT Auth (version: $version)" ./install.sh
 else
     # github release, --xz will reduce size
-    makeself --nox11 --xz src ict_auth.run "ICT Auth - ${VERSION}" ./install.sh
+    makeself --nox11 --xz src ict_auth.run "ICT Auth (version: $version)" ./install.sh
 fi
 
 chmod +x ict_auth.run

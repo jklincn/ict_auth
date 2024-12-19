@@ -1,55 +1,89 @@
 import os
 import sys
+import time
+import logging
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
-from ict_auth import NetworkError, _login, _logout, check_login, get_driver, show_debug_info
+from ict_auth import (
+    _login,
+    _logout,
+    check_login,
+    get_driver,
+    show_debug_info,
+    NetworkError,
+)
 
-if __name__ == "__main__":
+logging.basicConfig(
+    filename=f"{os.path.expanduser('~')}/.local/ict_auth/service.log",
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 
+
+def verify():
     try:
         driver = get_driver()
-
-        ict_username = os.getenv("ICT_USERNAME")
-        ict_password = os.getenv("ICT_PASSWORD")
-
-        if "--check" in sys.argv:
-            if check_login(driver):
-                _logout(driver)
-            _login(driver, ict_username, ict_password)
-            try:
-                driver.find_element(By.CSS_SELECTOR, "#username.value")
-                print("[INFO] Account verification successful.")
-            except NoSuchElementException:
-                print("[ERROR] Account verification failed.")
-                print("[ERROR] You can manually logout first and then try again.")
-                exit(1)
-        else:
-            if not check_login(driver):
-                print(
-                    "[INFO] Connection interruption detected. Logging in automatically."
-                )
-
-                _login(driver, ict_username, ict_password)
-
-                username = driver.find_element(By.CSS_SELECTOR, "#username.value").text
-                usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
-                usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
-                ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
-                print(f"[INFO] Username: {username}")
-                print(f"[INFO] Used flow: {usedflow}")
-                print(f"[INFO] Used time: {usedtime}")
-                print(f"[INFO] IP address: {ipv4}")
+        if check_login(driver):
+            _logout(driver)
+        _login(driver, ict_username, ict_password)
+        try:
+            driver.find_element(By.CSS_SELECTOR, "#username.value")
+        except NoSuchElementException:
+            exit(1)
     except NetworkError:
-        print(
-            '[ERROR] Unable to access "https://gw.ict.ac.cn". Please check your network connection and try again.'
-        )
+        raise
     except Exception:
-        print(
-            "\n[INTERNAL ERROR] An internal error has occurred. Please contact the developer and provide the information below."
+        logger.error(
+            "An internal error has occurred. Please contact the developer and provide the information below."
         )
         show_debug_info()
         raise
     finally:
         driver.quit()
+
+
+def service():
+    try:
+        logger.info("Service Start.")
+        while True:
+            driver = get_driver()
+            if not check_login(driver):
+                logger.info(
+                    "Connection interruption detected. Logging in automatically."
+                )
+                _login(driver, ict_username, ict_password)
+                username = driver.find_element(By.CSS_SELECTOR, "#username.value").text
+                usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
+                usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
+                ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
+                logger.info(f"Username: {username}")
+                logger.info(f"Used flow: {usedflow}")
+                logger.info(f"Used time: {usedtime}")
+                logger.info(f"IP address: {ipv4}")
+            driver.quit()
+            time.sleep(60)
+    except NetworkError:
+        raise
+    except Exception:
+        logger.error(
+            "An internal error has occurred. Please contact the developer and provide the information below."
+        )
+        show_debug_info()
+        raise
+    finally:
+        driver.quit()
+
+
+if __name__ == "__main__":
+
+    ict_username = os.getenv("ICT_USERNAME")
+    ict_password = os.getenv("ICT_PASSWORD")
+
+    if "--check" in sys.argv:
+        verify()
+    else:
+        service()
