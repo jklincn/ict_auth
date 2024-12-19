@@ -112,16 +112,6 @@ function service_disable() {
     fi
 }
 
-function check_upgrade() {
-    latest=$(curl -s https://oss.jklincn.com/ict_auth/release.txt)
-    if [[ -f "$install_dir/release.txt" ]]; then
-        current=$(cat "$install_dir/release.txt")
-        if [[ $latest != $current ]]; then
-            echo "[INFO] A new version ($latest) has been detected. You can use \"ict_auth upgrade\" to upgrade."
-        fi
-    fi
-}
-
 function upgrade() {
     latest=$(curl -s https://oss.jklincn.com/ict_auth/release.txt)
     if [[ -f "$install_dir/release.txt" ]]; then
@@ -147,11 +137,6 @@ function upgrade() {
         exit 1
     fi
 }
-
-# Avoid duplicate outputs during upgrade
-if [[ "$1" != "uninstall" && "$1" != "upgrade" ]]; then
-    check_upgrade
-fi
 
 case "$1" in
     ""|"--help"|"-h") 
