@@ -63,8 +63,6 @@ function service_enable() {
         service_content="[Unit]
 Description=ICT Auth Service
 After=network.target
-StartLimitIntervalSec=21600
-StartLimitBurst=15
 
 [Service]
 Type=simple
@@ -78,7 +76,7 @@ ExecStart=/bin/bash -c 'source $venv_dir/bin/activate && python3 $install_dir/se
 ExecStopPost=/bin/bash -c 'resolvectl flush-caches'
 
 Restart=on-failure
-RestartSec=20min
+RestartSec=10min
 
 [Install]
 WantedBy=multi-user.target"
