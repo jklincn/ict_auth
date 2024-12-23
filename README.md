@@ -70,7 +70,9 @@ $ ict_auth status
 
 ### 持久连接 (Beta)
 
-据观察，所里的网络时常自动断开，可以使用 `enable` 将 ict_auth 注册为系统后台服务，持续检测上网认证状态。如果发现网络断开，则自动进行登陆。默认检测频率是每分钟一次。
+据观察，所里的网络时常自动断开，可以使用 `enable` 将 ict_auth 注册为系统后台服务，持续检测上网认证状态。如果发现网络断开，则自动进行登陆。默认检测频率是每分钟一次，如果出错则十分钟后进行重试。
+
+> **2024-12-23 更新：现在感觉网络稳定了，登陆一次后很少会断开。**
 
 **注意：这会在本地明文保存账号与密码，存在账号安全隐患（待优化）**
 
@@ -100,27 +102,23 @@ Removed /etc/systemd/system/timers.target.wants/ict_auth.timer.
 
 ```
 $ ict_auth logs
-Dec 05 12:10:29 abc bash[344289]: [INFO] Connection interruption detected. Logging in automatically.
-Dec 05 12:10:29 abc bash[344289]: [INFO] Username: aaabbbccc
-Dec 05 12:10:29 abc bash[344289]: [INFO] Used flow: 3.55 GB
-Dec 05 12:10:29 abc bash[344289]: [INFO] Used time: 24小时35分29秒
-Dec 05 12:10:29 abc bash[344289]: [INFO] IP address: 10.xxx.xxx.xxx
+2024-12-19 05:51:24 [INFO] Service Start.
+2024-12-19 07:37:35 [INFO] Connection interruption detected. Logging in automatically.
+2024-12-19 07:37:35 [INFO] Connection interruption detected. Logging in automatically.
+2024-12-19 07:37:35 [INFO] Username: aaabbbccc
+2024-12-19 07:37:35 [INFO] Used flow: 3.55 GB
+2024-12-19 07:37:35 [INFO] Used time: 24小时35分29秒
+2024-12-19 07:37:35 [INFO] IP address: 10.xxx.xxx.xxx
 ```
 
 ### 更新
-
-当软件有可用更新时，会自动提醒
-
-```
-$ ict_auth
-[INFO] A new version (2024-12-17) has been detected. You can use "ict_auth upgrade" to upgrade.
-```
 
 使用 `upgrade` 命令进行更新
 
 ```
 $ ict_auth upgrade
-[INFO] Starting the upgrade...
+[INFO] Upgrading from 2024-12-07 to 2024-12-17...
+[INFO] Downloading installer...
 ######################################################### 100.0%
 Verifying archive integrity...  100%   MD5 checksums are OK. All good.
 Uncompressing ICT Auth - 2024-12-17  100%

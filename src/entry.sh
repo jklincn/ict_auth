@@ -4,11 +4,13 @@ install_dir="$HOME/.local/ict_auth"
 bin_dir="$HOME/.local/bin"
 venv_dir="$install_dir/venv"
 
-if [ "$EUID" -eq 0 ]; then
-    sudo=""
-else
-    sudo="sudo"
-fi
+sudo_cmd() {
+    if [ "$EUID" -eq 0 ]; then
+        "$@"
+    else
+        sudo "$@"
+    fi
+}
 
 function show_help() {
     echo "Usage: ict_auth [OPTIONS] COMMAND"
@@ -81,11 +83,11 @@ RestartSec=10min
 [Install]
 WantedBy=multi-user.target"
 
-        echo "$service_content" | $sudo tee "/etc/systemd/system/ict_auth.service" > /dev/null
+        echo "$service_content" | sudo_cmd tee "/etc/systemd/system/ict_auth.service" > /dev/null
 
-        $sudo systemctl daemon-reload
-        $sudo systemctl start ict_auth.service
-        $sudo systemctl enable ict_auth.service
+        sudo_cmd systemctl daemon-reload
+        sudo_cmd systemctl start ict_auth.service
+        sudo_cmd systemctl enable ict_auth.service
 
         echo "[INFO] Persistent connection service started successfully."
     fi
@@ -95,12 +97,12 @@ function service_disable() {
     if systemctl list-units | grep -q "ict_auth.service"; then
         echo "[INFO] Stopping persistent connection service..."
 
-        $sudo systemctl stop ict_auth.service
-        $sudo systemctl disable ict_auth.service
+        sudo_cmd systemctl stop ict_auth.service
+        sudo_cmd systemctl disable ict_auth.service
 
-        $sudo rm -f "/etc/systemd/system/ict_auth.service"
+        sudo_cmd rm -f "/etc/systemd/system/ict_auth.service"
 
-        $sudo systemctl daemon-reload
+        sudo_cmd systemctl daemon-reload
 
         rm -f "$install_dir/.env"
 
