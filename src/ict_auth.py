@@ -29,7 +29,6 @@ def get_driver() -> WebDriver:
     service = webdriver.ChromeService(
         executable_path=f"{path}/chromedriver/linux64/{version}/chromedriver"
     )
-
     driver = webdriver.Chrome(options=options, service=service)
     driver.set_page_load_timeout(5)
     driver.implicitly_wait(2)
@@ -124,15 +123,33 @@ def show_debug_info():
     print(f"ICT Auth Version: {my_version}")
 
 
+def status(driver: WebDriver):
+    username = driver.find_element(By.CSS_SELECTOR, "#username.value").text
+    usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
+    usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
+    ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
+
+    if os.path.exists("/etc/systemd/system/ict_auth.service"):
+        service_status = "active"
+    else:
+        service_status = "inactive"
+
+    print("[INFO] Status: " + "\033[1;32mOnline\033[0m")
+    print(f"[INFO] Service: {service_status}")
+    print(f"[INFO] Username: {username}")
+    print(f"[INFO] Used flow: {usedflow}")
+    print(f"[INFO] Used time: {usedtime}")
+    print(f"[INFO] IP address: {ipv4}")
+
+
 if __name__ == "__main__":
     try:
         arg = sys.argv
         if len(arg) != 2:
             raise Exception("len(arg) != 2")
+        print("[INFO] Preparing the runtime...")
         driver = get_driver()
-        print("[INFO] Checking if logged in...")
         is_logged_in = check_login(driver)
-
         if arg[1] == "login":
             if is_logged_in:
                 print("[INFO] You are already logged in.")
@@ -145,17 +162,14 @@ if __name__ == "__main__":
                 print("[ERROR] You are not logged in.")
         elif arg[1] == "status":
             if is_logged_in:
-                username = driver.find_element(By.CSS_SELECTOR, "#username.value").text
-                usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
-                usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
-                ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
-                print("[INFO] Status: " + "\033[32mOnline\033[0m")
-                print(f"[INFO] Username: {username}")
-                print(f"[INFO] Used flow: {usedflow}")
-                print(f"[INFO] Used time: {usedtime}")
-                print(f"[INFO] IP address: {ipv4}")
+                status(driver)
             else:
-                print("[INFO] Status: " + "\033[31mOffline\033[0m")
+                if os.path.exists("/etc/systemd/system/ict_auth.service"):
+                    service_status = "active"
+                else:
+                    service_status = "inactive"
+                print("[INFO] Status: " + "\033[1;31mOffline\033[0m")
+                print(f"[INFO] Service: {service_status}")
 
     except KeyboardInterrupt:
         print()
