@@ -9,8 +9,10 @@ err() {
     exit 1
 }
 
+
 # Download the installer
-echo "[INFO] Downloading ICT Auth installer..."
+latest=$(curl -s https://oss.jklincn.com/ict_auth/release.txt)
+echo "[INFO] Downloading ICT Auth installer ($latest)..."
 if ! curl -f --progress-bar -o /tmp/ict_auth.run https://oss.jklincn.com/ict_auth/ict_auth.run; then
     err "Failed to download installer"
 fi
