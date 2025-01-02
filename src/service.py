@@ -18,7 +18,7 @@ from ict_auth import (
 logging.basicConfig(
     filename=f"{os.path.expanduser('~')}/.local/ict_auth/service.log",
     level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
+    format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
@@ -47,35 +47,40 @@ def verify():
 
 
 def service():
+    logger.info("Service Start.")
     try:
-        logger.info("Service Start.")
         while True:
-            driver = get_driver()
-            if not check_login(driver):
-                logger.info(
-                    "Connection interruption detected. Logging in automatically."
-                )
-                _login(driver, ict_username, ict_password)
-                username = driver.find_element(By.CSS_SELECTOR, "#username.value").text
-                usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
-                usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
-                ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
-                logger.info(f"Username: {username}")
-                logger.info(f"Used flow: {usedflow}")
-                logger.info(f"Used time: {usedtime}")
-                logger.info(f"IP address: {ipv4}")
-            driver.quit()
-            time.sleep(60)
-    except NetworkError:
-        raise
+            try:
+                driver = get_driver()
+                if not check_login(driver):
+                    logger.info(
+                        "Connection interruption detected. Logging in automatically."
+                    )
+                    _login(driver, ict_username, ict_password)
+                    # fmt: off
+                    username = driver.find_element(By.CSS_SELECTOR, "#username.value").text
+                    usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
+                    usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
+                    ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
+                    logger.info(f"Username: {username}")
+                    logger.info(f"Used flow: {usedflow}")
+                    logger.info(f"Used time: {usedtime}")
+                    logger.info(f"IP address: {ipv4}")
+                    # fmt: on
+                time.sleep(60)
+            except NetworkError:
+                logger.exception("Network error. Retrying in 10 minutes.")
+                time.sleep(600)
+            finally:
+                if "driver" in locals() and driver:
+                    driver.quit()
     except Exception:
-        logger.error(
+        logger.exception(
             "An internal error has occurred. Please contact the developer and provide the information below."
         )
-        show_debug_info()
-        raise
+        show_debug_info(logger)
+        sys.exit(1)
     finally:
-        driver.quit()
         logger.info("Service Exit.")
 
 

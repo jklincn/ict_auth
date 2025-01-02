@@ -101,7 +101,7 @@ def login(driver: WebDriver):
         print("[ERROR] Incorrect username or password.")
 
 
-def show_debug_info():
+def show_debug_info(logger=None):
     import platform
 
     path = os.path.dirname(os.path.abspath(__file__))
@@ -118,9 +118,14 @@ def show_debug_info():
                     os_version = line.split("=")[1].strip().strip('"')
     except FileNotFoundError:
         os_version = ""
-    print(f"Operating System: {os_version}")
-    print(f"Python Version: {platform.python_version()}")
-    print(f"ICT Auth Version: {my_version}")
+    if logger:
+        logger.info(f"Operating System: {os_version}")
+        logger.info(f"Python Version: {platform.python_version()}")
+        logger.info(f"ICT Auth Version: {my_version}")
+    else:
+        print(f"Operating System: {os_version}")
+        print(f"Python Version: {platform.python_version()}")
+        print(f"ICT Auth Version: {my_version}")
 
 
 def status(driver: WebDriver):

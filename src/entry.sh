@@ -75,10 +75,6 @@ EnvironmentFile=$install_dir/.env
 
 ExecStartPre=/bin/bash -c 'resolvectl flush-caches'
 ExecStart=/bin/bash -c 'source $venv_dir/bin/activate && python3 $install_dir/service.py'
-ExecStopPost=/bin/bash -c 'resolvectl flush-caches'
-
-Restart=on-failure
-RestartSec=10min
 
 [Install]
 WantedBy=multi-user.target"
