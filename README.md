@@ -25,7 +25,7 @@ curl -sSf https://oss.jklincn.com/ict_auth.sh | sh
 
 ```
 $ ict_auth login
-[INFO] Checking if logged in...
+[INFO] Preparing the runtime...
 [INFO] Starting login process...
 =============================
 ICT Username: aaabbbccc
@@ -44,7 +44,7 @@ ICT Password:
 
 ```
 $ ict_auth logout
-[INFO] Checking if logged in...
+[INFO] Preparing the runtime...
 [INFO] Logout succeeded.
 ```
 
@@ -55,7 +55,7 @@ $ ict_auth logout
 ```
 # 已登陆状态
 $ ict_auth status
-[INFO] Checking if logged in...
+[INFO] Preparing the runtime...
 [INFO] Status: Online
 [INFO] Username: aaabbbccc
 [INFO] Used flow: 33.42 GB
@@ -64,7 +64,7 @@ $ ict_auth status
 
 # 未登录状态
 $ ict_auth status
-[INFO] Checking if logged in...
+[INFO] Preparing the runtime...
 [INFO] Status: Offline
 ```
 

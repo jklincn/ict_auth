@@ -76,6 +76,7 @@ def service():
         raise
     finally:
         driver.quit()
+        logger.info("Service Exit.")
 
 
 if __name__ == "__main__":

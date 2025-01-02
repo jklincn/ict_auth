@@ -106,6 +106,7 @@ else
     read -p "[INFO] ICT Auth (version: $version) is already installed on this system. Would you like to overwrite it? [y/N]" choice
     choice=${choice:-n}
     if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
+        rm -f "$install_dir"/release.txt "$install_dir"/self-build.txt
         cp -r "$script_dir"/* "$install_dir/"
         if [ $? -ne 0 ]; then
             echo "[ERROR] Failed to overwrite."
