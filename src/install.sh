@@ -5,11 +5,13 @@ install_dir="$HOME/.local/ict_auth"
 bin_dir="$HOME/.local/bin"
 venv_dir="$install_dir/venv"
 
-if [ "$EUID" -eq 0 ]; then
-    sudo=""
-else
-    sudo="sudo"
-fi
+sudo_cmd() {
+    if [ "$EUID" -eq 0 ]; then
+        "$@"
+    else
+        sudo "$@"
+    fi
+}
 
 function cleanup() {
     rm -f "$bin_dir/ict_auth"
@@ -62,9 +64,9 @@ function install() {
         choice=${choice:-y}
         if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
             echo "[INFO] Updating package lists..."
-            $sudo apt-get update
+            sudo_cmd apt-get update
             echo "[INFO] Installing missing packages: ${missing_packages[*]}"
-            $sudo apt-get install -y "${missing_packages[@]}"
+            sudo_cmd apt-get install -y "${missing_packages[@]}"
         else
             echo "[INFO] Installation of missing packages aborted."
             exit 0
@@ -108,6 +110,7 @@ else
     if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
         rm -f "$install_dir"/release.txt "$install_dir"/self-build.txt
         cp -r "$script_dir"/* "$install_dir/"
+        sudo_cmd systemctl restart ict_auth.service
         if [ $? -ne 0 ]; then
             echo "[ERROR] Failed to overwrite."
             exit 1
