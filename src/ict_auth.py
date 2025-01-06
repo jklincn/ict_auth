@@ -39,11 +39,8 @@ def get_driver() -> WebDriver:
 def check_login(driver: WebDriver) -> bool:
     try:
         driver.get(URL)
-    except Exception as e:
-        raise NetworkError(
-            f"[ERROR] Unable to access {URL}. Please check your network connection and try again.",
-            e,
-        ) from e
+    except Exception:
+        raise NetworkError
     try:
         driver.find_element(By.CSS_SELECTOR, "#logout.btn-logout")
         return True
@@ -179,7 +176,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print()
     except NetworkError:
-        raise
+        print(f"[ERROR] Unable to access {URL}. Please check your network connection and try again.")
     except Exception:
         print(
             "\n[INTERNAL ERROR] An internal error has occurred. Please contact the developer and provide the information below."

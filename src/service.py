@@ -69,7 +69,7 @@ def service():
                     # fmt: on
                 time.sleep(60)
             except NetworkError:
-                logger.exception("Network error. Retrying in 10 minutes.")
+                logger.error("Network error. Retrying in 10 minutes.")
                 time.sleep(600)
             finally:
                 if "driver" in locals() and driver:
