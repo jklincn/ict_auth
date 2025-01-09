@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 script_dir=$(cd "$(dirname "$0")" && pwd)
 install_dir="$HOME/.local/ict_auth"
 bin_dir="$HOME/.local/bin"
@@ -25,6 +27,7 @@ function install() {
 
     mkdir -p "$install_dir" "$bin_dir"
     cp -r "$script_dir"/* "$install_dir/"
+    echo "source $install_dir/ict_auth-completion.bash" >> ~/.bash_completion
     ln -sf "$install_dir/entry.sh" "$bin_dir/ict_auth"
 
     packages=(
@@ -110,11 +113,11 @@ else
     if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
         rm -f "$install_dir"/release.txt "$install_dir"/self-build.txt
         cp -r "$script_dir"/* "$install_dir/"
-        sudo_cmd systemctl restart ict_auth.service
         if [ $? -ne 0 ]; then
             echo "[ERROR] Failed to overwrite."
             exit 1
         fi
+        sudo_cmd systemctl restart ict_auth.service
         echo "[INFO] ict_auth successfully installed in $install_dir"
     else
         echo "[INFO] Exit."

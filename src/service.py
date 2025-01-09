@@ -67,13 +67,12 @@ def service():
                     logger.info(f"Used time: {usedtime}")
                     logger.info(f"IP address: {ipv4}")
                     # fmt: on
+                driver.quit()
                 time.sleep(60)
             except NetworkError:
                 logger.error("Network error. Retrying in 10 minutes.")
+                driver.quit()
                 time.sleep(600)
-            finally:
-                if "driver" in locals() and driver:
-                    driver.quit()
     except Exception:
         logger.exception(
             "An internal error has occurred. Please contact the developer and provide the information below."
