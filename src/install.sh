@@ -34,6 +34,7 @@ function install() {
         python3
         python3-pip
         python3-venv
+        bash-completion
         libnss3
         libgconf-2-4
         libx11-xcb1
@@ -95,6 +96,7 @@ function install() {
         echo "  export PATH=\"$bin_dir:\$PATH\""
     fi
 
+    . /etc/bash_completion
     echo "[INFO] ict_auth successfully installed in $install_dir"
     exit 0
 }
