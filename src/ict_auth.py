@@ -1,6 +1,7 @@
 import getpass
 import os
 import sys
+import time
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -29,11 +30,24 @@ def get_driver() -> WebDriver:
     service = webdriver.ChromeService(
         executable_path=f"{path}/chromedriver/linux64/{version}/chromedriver"
     )
-    driver = webdriver.Chrome(options=options, service=service)
-    driver.set_page_load_timeout(5)
-    driver.implicitly_wait(2)
-
-    return driver
+    
+    retries = 0
+    max_retries = 5
+    while retries < max_retries:
+        try:
+            driver = webdriver.Chrome(options=options, service=service)
+            driver.set_page_load_timeout(5)
+            driver.implicitly_wait(2)
+            return driver
+        except Exception as e:
+            retries += 1
+            print(f"[ERROR] Get WebDriver failed, Retrying ({retries+1}/{max_retries})")
+            if retries < max_retries:
+                time.sleep(1)
+            else:
+                raise Exception(
+                    f"Failed to initialize WebDriver after {max_retries} attempts: {e}"
+                )
 
 
 def check_login(driver: WebDriver) -> bool:
@@ -166,6 +180,7 @@ if __name__ == "__main__":
             if is_logged_in:
                 status(driver)
             else:
+                # change to systemd status (failed/active/disabled)
                 if os.path.exists("/etc/systemd/system/ict_auth.service"):
                     service_status = "active"
                 else:
@@ -176,7 +191,9 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print()
     except NetworkError:
-        print(f"[ERROR] Unable to access {URL}. Please check your network connection and try again.")
+        print(
+            f"[ERROR] Unable to access {URL}. Please check your network connection and try again."
+        )
     except Exception:
         print(
             "\n[INTERNAL ERROR] An internal error has occurred. Please contact the developer and provide the information below."
