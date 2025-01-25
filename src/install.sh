@@ -115,12 +115,13 @@ else
     choice=${choice:-n}
     if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
         rm -f "$install_dir"/release.txt "$install_dir"/self-build.txt
+        sudo_cmd systemctl stop ict_auth.service
         cp -r "$script_dir"/* "$install_dir/"
         if [ $? -ne 0 ]; then
             echo "[ERROR] Failed to overwrite."
             exit 1
         fi
-        sudo_cmd systemctl restart ict_auth.service
+        sudo_cmd systemctl start ict_auth.service
         echo "[INFO] ict_auth successfully installed in $install_dir"
     else
         echo "[INFO] Exit."

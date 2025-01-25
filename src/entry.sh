@@ -110,6 +110,7 @@ function service_disable() {
 
 function upgrade() {
     latest=$(curl -s https://oss.jklincn.com/ict_auth/release.txt)
+    # not consider self-build
     if [[ -f "$install_dir/release.txt" ]]; then
         current=$(cat "$install_dir/release.txt")
         if [[ $latest == $current ]]; then
