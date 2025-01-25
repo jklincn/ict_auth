@@ -105,6 +105,7 @@ function install() {
 if [ ! -d "$install_dir" ]; then
     install
 else
+    # overwrite
     if [[ -f "$install_dir/release.txt" ]]; then
         version=$(cat $install_dir/release.txt)
     else

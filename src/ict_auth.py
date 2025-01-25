@@ -10,6 +10,11 @@ from selenium.webdriver.common.by import By
 
 URL = "https://gw.ict.ac.cn"
 
+# Avoid the influence of proxy
+os.environ["http_proxy"] = ""
+os.environ["https_proxy"] = ""
+os.environ["socks_proxy"] = ""
+os.environ["all_proxy"] = ""
 
 class NetworkError(Exception):
     pass
@@ -70,7 +75,11 @@ def _logout(driver: WebDriver):
     confirm_button.click()
 
 
-def logout(driver: WebDriver):
+def logout(driver: WebDriver,is_logged_in: bool):
+    if not is_logged_in:
+        print("[INFO] You are not logged in.")
+        return
+
     _logout(driver)
     driver.find_element(By.CSS_SELECTOR, "#login-account.btn-login")
     print("[INFO] Logout succeeded.")
@@ -87,7 +96,11 @@ def _login(driver: WebDriver, ict_username: str, ict_password: str):
     btn_login.click()
 
 
-def login(driver: WebDriver):
+def login(driver: WebDriver,is_logged_in: bool):
+    if is_logged_in:
+        print("[INFO] You are already logged in.")
+        return
+    
     print("[INFO] Starting login process...")
 
     print("=============================")
@@ -139,16 +152,22 @@ def show_debug_info(logger=None):
         print(f"ICT Auth Version: {my_version}")
 
 
-def status(driver: WebDriver):
+def status(driver: WebDriver,is_logged_in: bool):
+    # todo: change to systemd status (failed/active/disabled)
+    if os.path.exists("/etc/systemd/system/ict_auth.service"):
+        service_status = "enabled"
+    else:
+        service_status = "disabled"
+
+    if not is_logged_in:
+        print("[INFO] Status: " + "\033[1;31mOffline\033[0m")
+        print(f"[INFO] Service: {service_status}")
+        return
+
     username = driver.find_element(By.CSS_SELECTOR, "#username.value").text
     usedflow = driver.find_element(By.CSS_SELECTOR, "#used-flow.value").text
     usedtime = driver.find_element(By.CSS_SELECTOR, "#used-time.value").text
     ipv4 = driver.find_element(By.CSS_SELECTOR, "#ipv4.value").text
-
-    if os.path.exists("/etc/systemd/system/ict_auth.service"):
-        service_status = "active"
-    else:
-        service_status = "inactive"
 
     print("[INFO] Status: " + "\033[1;32mOnline\033[0m")
     print(f"[INFO] Service: {service_status}")
@@ -167,26 +186,11 @@ if __name__ == "__main__":
         driver = get_driver()
         is_logged_in = check_login(driver)
         if arg[1] == "login":
-            if is_logged_in:
-                print("[INFO] You are already logged in.")
-            else:
-                login(driver)
+            login(driver,is_logged_in)
         elif arg[1] == "logout":
-            if is_logged_in:
-                logout(driver)
-            else:
-                print("[ERROR] You are not logged in.")
+            logout(driver,is_logged_in)
         elif arg[1] == "status":
-            if is_logged_in:
-                status(driver)
-            else:
-                # change to systemd status (failed/active/disabled)
-                if os.path.exists("/etc/systemd/system/ict_auth.service"):
-                    service_status = "active"
-                else:
-                    service_status = "inactive"
-                print("[INFO] Status: " + "\033[1;31mOffline\033[0m")
-                print(f"[INFO] Service: {service_status}")
+            status(driver,is_logged_in)
 
     except KeyboardInterrupt:
         print()
