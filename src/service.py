@@ -13,6 +13,7 @@ from ict_auth import (
     get_driver,
     show_debug_info,
     NetworkError,
+    URL,
 )
 
 logging.basicConfig(
@@ -70,7 +71,7 @@ def service():
                 driver.quit()
                 time.sleep(60)
             except NetworkError:
-                logger.error("Network error. Retrying in 10 minutes.")
+                logger.warning(f"Unable to access {URL}. Retrying in 10 minutes.")
                 driver.quit()
                 time.sleep(600)
     except Exception:
