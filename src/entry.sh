@@ -165,7 +165,7 @@ case "$1" in
         service_disable
         ;;   
     "logs")
-        less "$install_dir/service.log"
+        less "$install_dir/log"
         ;;
     "upgrade")
         upgrade

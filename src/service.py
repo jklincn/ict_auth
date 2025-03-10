@@ -1,23 +1,17 @@
+import logging
 import os
 import sys
 import time
-import logging
 
+import urllib3
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
-from ict_auth import (
-    _login,
-    _logout,
-    check_login,
-    get_driver,
-    show_debug_info,
-    NetworkError,
-    URL,
-)
+from ict_auth import (URL, NetworkError, _login, _logout, check_login,
+                      get_driver, show_debug_info)
 
 logging.basicConfig(
-    filename=f"{os.path.expanduser('~')}/.local/ict_auth/service.log",
+    filename=f"{os.path.expanduser('~')}/.local/ict_auth/log",
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
@@ -72,6 +66,10 @@ def service():
                 time.sleep(60)
             except NetworkError:
                 logger.warning(f"Unable to access {URL}. Retrying in 10 minutes.")
+                driver.quit()
+                time.sleep(600)
+            except urllib3.exceptions.ReadTimeoutError:
+                logger.warning("Connection timeout. Retrying in 10 minutes.")
                 driver.quit()
                 time.sleep(600)
     except Exception:
