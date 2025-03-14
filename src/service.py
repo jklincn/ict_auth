@@ -72,6 +72,12 @@ def service():
                 logger.warning("Connection timeout. Retrying in 10 minutes.")
                 driver.quit()
                 time.sleep(600)
+            except NoSuchElementException:
+                logger.warning(
+                    "An internal error has occurred. Retrying in 10 minutes."
+                )
+                driver.quit()
+                time.sleep(600)
     except Exception:
         logger.exception(
             "An internal error has occurred. Please contact the developer and provide the information below."

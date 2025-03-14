@@ -25,11 +25,6 @@ function install() {
     trap cleanup SIGINT
     echo "[INFO] Installing ICT Auth..."
 
-    mkdir -p "$install_dir" "$bin_dir"
-    cp -r "$script_dir"/* "$install_dir/"
-    echo "source $install_dir/ict_auth-completion.bash" >> ~/.bash_completion
-    ln -sf "$install_dir/entry.sh" "$bin_dir/ict_auth"
-
     packages=(
         python3
         python3-pip
@@ -77,6 +72,11 @@ function install() {
         fi
     fi
 
+    mkdir -p "$install_dir" "$bin_dir"
+    cp -r "$script_dir"/* "$install_dir/"
+    echo "source $install_dir/ict_auth-completion.bash" >> ~/.bash_completion
+    ln -sf "$install_dir/entry.sh" "$bin_dir/ict_auth"
+    
     /usr/bin/python3 -m venv "$venv_dir"
 
     source "$venv_dir/bin/activate"

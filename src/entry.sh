@@ -176,6 +176,7 @@ case "$1" in
         fi
         rm -f "$bin_dir/ict_auth"
         rm -rf "$install_dir"
+        sed -i '/source .*ict_auth-completion.bash/d' ~/.bash_completion
         echo "[INFO] ict_auth uninstalled successfully."
         ;;
     *) 
