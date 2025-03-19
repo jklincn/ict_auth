@@ -14,7 +14,7 @@
 ## 安装
 
 ```
-curl -sSf https://oss.jklincn.com/ict_auth.sh | sh
+curl -sSf -6 https://oss.jklincn.com/ict_auth.sh | sh
 ```
 
 这会通过 ipv6 网络下载安装包并进行安装。
