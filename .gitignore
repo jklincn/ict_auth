@@ -1,5 +1,10 @@
-src/chrome*
-src/self-build.txt
-src/browser_version.txt
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
 
-ict_auth.run
+# Virtual environments
+.venv
