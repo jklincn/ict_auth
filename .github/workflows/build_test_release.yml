@@ -31,6 +31,8 @@ jobs:
           uv run -- playwright install --with-deps chromium-headless-shell
           mkdir libs
           ls /usr/lib/x86_64-linux-gnu/nss
+          ls /usr/lib/x86_64-linux-gnu
+          ls /lib/x86_64-linux-gnu
           lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u | xargs -I{} cp {} libs
           cp /usr/lib/x86_64-linux-gnu/nss/libnssckbi.so libs
           cp /usr/lib/x86_64-linux-gnu/nss/libsoftokn3.so libs
