@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch tags to get the correct version
 
       - uses: astral-sh/setup-uv@v5
 
@@ -28,8 +30,9 @@ jobs:
           uv sync --locked
           uv run -- playwright install --with-deps chromium-headless-shell
           mkdir libs
-          lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u | xargs -I{} cp -n {} libs
-          find /usr -name libnssckbi.so
+          set -x
+          find / -name "libnssckbi.so" 2>/dev/null | tee /dev/stderr
+          lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u | xargs -I{} cp {} libs
           cp /usr/lib/x86_64-linux-gnu/nss/libnssckbi.so libs
           cp /usr/lib/x86_64-linux-gnu/nss/libsoftokn3.so libs
         env:
