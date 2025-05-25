@@ -3,9 +3,9 @@ name: build_test_release
 on:
   push:
     branches:
-      - '**'
+      - "**"
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch tags to get the correct version
+          fetch-depth: 0 # Fetch tags to get the correct version
 
       - uses: astral-sh/setup-uv@v5
 
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
       - uses: actions/setup-python@v5
         with:
@@ -71,7 +71,7 @@ jobs:
 
   release:
     needs: test
-    if: startsWith(github.ref, 'refs/tags/v')  # 只在打 tag 时触发
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     environment:
       name: pypi

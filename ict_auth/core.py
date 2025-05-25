@@ -43,7 +43,7 @@ def init() -> None:
     os.environ.pop("HTTPS_PROXY", None)
 
     # Set the browsers path and library path
-    path = Path(__file__)
+    path = Path(__file__).parent
     os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(path / "browser")
     os.environ["LD_LIBRARY_PATH"] = str(path / "libs")
 
@@ -145,7 +145,7 @@ def test() -> None:
                 if item.is_dir():
                     list_all_files(item, indent + 1)
 
-        list_all_files(Path(__file__))
+        list_all_files(Path(__file__).parent)
 
 
 def main() -> None:
