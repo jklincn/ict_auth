@@ -30,12 +30,9 @@ jobs:
           uv sync --locked
           uv run -- playwright install --with-deps chromium-headless-shell
           mkdir libs
-          ls /usr/lib/x86_64-linux-gnu
-          ls /lib/x86_64-linux-gnu
-          ls /usr/lib/x86_64-linux-gnu/nss
           lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u | xargs -I{} cp {} libs
-          cp /usr/lib/x86_64-linux-gnu/nss/libnssckbi.so libs
-          cp /usr/lib/x86_64-linux-gnu/nss/libsoftokn3.so libs
+          cp /usr/lib/x86_64-linux-gnu/libnssckbi.so libs
+          cp /usr/lib/x86_64-linux-gnu/libsoftokn3.so libs
         env:
           PLAYWRIGHT_BROWSERS_PATH: browser
           CHROME_PATH: browser/chromium_headless_shell-*/chrome-linux/headless_shell
