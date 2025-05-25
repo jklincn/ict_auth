@@ -23,10 +23,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y pax-utils
+          pip install -U pip
+          pip install -U pyelftools
           uv sync --locked
           uv run -- playwright install --with-deps chromium-headless-shell
           mkdir libs
           lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u | xargs -I{} cp -n {} libs
+          find /usr -name libnssckbi.so
           cp /usr/lib/x86_64-linux-gnu/nss/libnssckbi.so libs
           cp /usr/lib/x86_64-linux-gnu/nss/libsoftokn3.so libs
         env:
