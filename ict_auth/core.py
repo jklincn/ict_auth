@@ -2,7 +2,7 @@
 
 import logging
 import os
-from importlib import resources
+from pathlib import Path
 
 from playwright.sync_api import (
     Page,
@@ -43,9 +43,9 @@ def init() -> None:
     os.environ.pop("HTTPS_PROXY", None)
 
     # Set the browsers path and library path
-    dir_path = resources.files("ict_auth")
-    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(dir_path / "browser")
-    os.environ["LD_LIBRARY_PATH"] = str(dir_path / "libs")
+    path = Path(__file__)
+    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(path / "browser")
+    os.environ["LD_LIBRARY_PATH"] = str(path / "libs")
 
 
 def login(page: Page, username: str, password: str) -> None:
@@ -123,17 +123,29 @@ def status(page: Page) -> bool:
 
 
 def test() -> None:
-    init()
-    log.debug(
-        f"PLAYWRIGHT_BROWSERS_PATH = {os.environ.get('PLAYWRIGHT_BROWSERS_PATH')}"
-    )
-    log.debug(f"LD_LIBRARY_PATH = {os.environ.get('LD_LIBRARY_PATH')}")
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
-        page = browser.new_page()
-        page.goto("https://jklincn.com", timeout=5000)
-        browser.close()
-    log.info("Pass")
+    try:
+        init()
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            page = browser.new_page()
+            page.goto("https://jklincn.com", timeout=5000)
+            browser.close()
+
+        log.info("Pass")
+    except Exception as e:
+        log.setLevel(logging.DEBUG)
+        log.debug(f"Exception: {e}")
+        log.debug(
+            f"PLAYWRIGHT_BROWSERS_PATH = {os.environ.get('PLAYWRIGHT_BROWSERS_PATH')}"
+        )
+
+        def list_all_files(dir_path: Path, indent: int = 0):
+            for item in dir_path.iterdir():
+                log.debug("  " * indent + item.name)
+                if item.is_dir():
+                    list_all_files(item, indent + 1)
+
+        list_all_files(Path(__file__))
 
 
 def main() -> None:
