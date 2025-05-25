@@ -1,0 +1,86 @@
+name: build_test_release
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pax-utils
+          uv sync --locked
+          uv run -- playwright install --with-deps chromium-headless-shell
+          mkdir libs
+          lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u | xargs -I{} cp -n {} libs
+          cp /usr/lib/x86_64-linux-gnu/nss/libnssckbi.so libs
+          cp /usr/lib/x86_64-linux-gnu/nss/libsoftokn3.so libs
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: browser
+          CHROME_PATH: browser/chromium_headless_shell-*/chrome-linux/headless_shell
+          FFMPEG_PATH: browser/ffmpeg-*/ffmpeg-linux
+
+      - name: Build package
+        run: uv build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ict-auth-dist
+          path: dist/*.whl
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ict-auth-dist
+          path: dist
+
+      - name: Install built wheel
+        run: |
+          pip install dist/*.whl
+
+      - name: Run tests
+        run: ict_auth test
+
+  release:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v')  # 只在打 tag 时触发
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/ict-auth
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ict-auth-dist
+          path: dist
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}

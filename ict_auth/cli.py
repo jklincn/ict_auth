@@ -2,9 +2,8 @@
 
 import typer
 
-from ict_auth import core
-
-__version__ = "2.0.0"
+from . import core
+from ._version import __version__
 
 app = typer.Typer(
     help="A command-line tool for ICT network authentication.",
@@ -37,16 +36,14 @@ def logs() -> None:
     pass
 
 
-@app.command()
-def uninstall() -> None:
-    """
-    Uninstall the ict_auth package from the system.
-    """
-    pass
+@app.command(hidden=True)
+def test() -> None:
+    core.test()
 
 
 @app.callback(invoke_without_command=True)
 def callback(
+    ctx: typer.Context = typer.Option(None),
     version: bool = typer.Option(
         False,
         "--version",
@@ -55,12 +52,13 @@ def callback(
     ),
 ):
     if version:
-        typer.echo(f"ict_auth {__version__}")
+        typer.echo({__version__})
         raise typer.Exit()
-    try:
-        core.main()
-    except KeyboardInterrupt:
-        print()
+    if ctx.invoked_subcommand is None:
+        try:
+            core.main()
+        except KeyboardInterrupt:
+            print()
 
 
 def run():

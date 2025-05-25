@@ -2,6 +2,7 @@
 
 import logging
 import os
+from importlib import resources
 
 from playwright.sync_api import (
     Page,
@@ -30,15 +31,21 @@ log = logging.getLogger("ict_auth")
 URL = "https://gw.ict.ac.cn"
 
 
-def unset_proxy() -> None:
+def init() -> None:
     """
-    Unset the proxy settings for the current session.
+    Initialize the Playwright environment.
     """
 
+    # Unset the proxy settings
     os.environ.pop("http_proxy", None)
     os.environ.pop("https_proxy", None)
     os.environ.pop("HTTP_PROXY", None)
     os.environ.pop("HTTPS_PROXY", None)
+
+    # Set the browsers path and library path
+    dir_path = resources.files("ict_auth")
+    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(dir_path / "browser")
+    os.environ["LD_LIBRARY_PATH"] = str(dir_path / "libs")
 
 
 def login(page: Page, username: str, password: str) -> None:
@@ -85,10 +92,10 @@ def print_info(page: Page) -> None:
     usedflow = page.locator("#used-flow.value").inner_text()
     usedtime = page.locator("#used-time.value").inner_text()
     ip = page.locator("#ipv4.value").inner_text()
-    log.info(f"User: {username}", extra={"highlighter": None})
-    log.info(f"Used flow: {usedflow}", extra={"highlighter": None})
-    log.info(f"Used time: {usedtime}", extra={"highlighter": None})
-    log.info(f"IP: {ip}", extra={"highlighter": None})
+    log.info(f"User: {username}")
+    log.info(f"Used flow: {usedflow}")
+    log.info(f"Used time: {usedtime}")
+    log.info(f"IP: {ip}")
 
 
 def status(page: Page) -> bool:
@@ -115,9 +122,23 @@ def status(page: Page) -> bool:
         login(page, username, password)
 
 
+def test() -> None:
+    init()
+    log.debug(
+        f"PLAYWRIGHT_BROWSERS_PATH = {os.environ.get('PLAYWRIGHT_BROWSERS_PATH')}"
+    )
+    log.debug(f"LD_LIBRARY_PATH = {os.environ.get('LD_LIBRARY_PATH')}")
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.goto("https://jklincn.com", timeout=5000)
+        browser.close()
+    log.info("Pass")
+
+
 def main() -> None:
-    unset_proxy()
-    log.info("Initializeing Playwright...")
+    log.info("Initializeing Runtime...")
+    init()
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
