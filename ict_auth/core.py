@@ -138,6 +138,10 @@ def test() -> None:
         log.debug(
             f"PLAYWRIGHT_BROWSERS_PATH = {os.environ.get('PLAYWRIGHT_BROWSERS_PATH')}"
         )
+        log.debug(f"LD_LIBRARY_PATH = {os.environ.get('LD_LIBRARY_PATH')}")
+        whl_files = list(Path("dist").glob("*.whl"))
+        for file in whl_files:
+            log.debug(f"whl file: {file} size: {file.stat().st_size} bytes")
 
         def list_all_files(dir_path: Path, indent: int = 0):
             for item in dir_path.iterdir():
@@ -146,6 +150,7 @@ def test() -> None:
                     list_all_files(item, indent + 1)
 
         list_all_files(Path(__file__).parent)
+        exit(1)
 
 
 def main() -> None:

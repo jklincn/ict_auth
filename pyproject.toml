@@ -7,7 +7,7 @@ name = "ict-auth"
 dynamic = ["version"]
 description = "使用 CLI 进行中科院计算所上网认证登陆"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 dependencies = ["playwright>=1.48.0", "typer>=0.15.4"]
 authors = [{ name = "jklincn", email = "jklincn@outlook.com" }]
 license = "MIT"
@@ -20,12 +20,17 @@ Repository = "https://github.com/jklincn/ict_auth"
 ict_auth = "ict_auth.cli:run"
 
 [tool.hatch.build.targets.sdist]
-artifacts = [
+ignore-vcs = true
+include = [
+  "ict_auth/*.py",
   "ict_auth/browser",
   "ict_auth/libs",
 ]
+
 [tool.hatch.build.targets.wheel]
-artifacts = [
+ignore-vcs = true
+include = [
+  "ict_auth/*.py",
   "ict_auth/browser",
   "ict_auth/libs",
 ]
