@@ -25,7 +25,7 @@ pip install ict-auth
 >    python3 -m ensurepip --default-pip
 >    ```
 >
-> 2. 如果服务器正确连接网线但没有获取到公网 ipv6 地址，可以在本地[手动下载安装包]()再使用 scp 拷贝至远程服务器
+> 2. 如果服务器正确连接网线但没有获取到公网 ipv6 地址，可以在本地[手动下载 whl 安装包](https://pypi.org/project/ict-auth/#files)再使用 scp 拷贝至远程服务器
 
 ## 使用
 
