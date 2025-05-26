@@ -1,0 +1,92 @@
+name: build_test_publish
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ict_auth/browser
+      CHROME_PATH: ict_auth/browser/chromium_headless_shell-*/chrome-linux/headless_shell
+      FFMPEG_PATH: ict_auth/browser/ffmpeg-*/ffmpeg-linux
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch tags to get the correct version
+
+      - uses: astral-sh/setup-uv@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pax-utils
+          pip install -U pip
+          pip install -U pyelftools
+          uv sync --locked
+          uv run -- playwright install --with-deps chromium-headless-shell
+          mkdir ict_auth/libs
+          lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u > ict_auth/libs/libs.txt
+          cp /usr/lib/x86_64-linux-gnu/nss/libnssckbi.so ict_auth/libs
+          cp /usr/lib/x86_64-linux-gnu/nss/libsoftokn3.so ict_auth/libs
+
+      - name: Build package
+        run: |
+          strip --strip-all ${CHROME_PATH} ${FFMPEG_PATH}
+          rm -f ict_auth/libs/{ld-linux-x86-64.so.2,libc.so.6,libm.so.6}
+          uv build
+          ls -lah dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ict-auth-dist
+          path: dist
+
+  test:
+    needs: build
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ict-auth-dist
+          path: dist
+
+      - name: Install built wheel
+        run: |
+          pip install dist/*.whl
+
+      - name: Run tests
+        run: ict_auth test
+
+  publish:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-22.04
+    environment:
+      name: pypi
+      url: https://pypi.org/p/ict-auth
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ict-auth-dist
+          path: dist
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

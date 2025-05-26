@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ict-auth"
+dynamic = ["version"]
+description = "使用 CLI 进行中科院计算所上网认证登陆"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "playwright>=1.48.0",
+    "typer>=0.15.4",
+]
+authors = [{ name = "jklincn", email = "jklincn@outlook.com" }]
+license = "MIT"
+
+[project.urls]
+Homepage = "https://github.com/jklincn/ict_auth"
+Repository = "https://github.com/jklincn/ict_auth"
+
+[project.scripts]
+ict_auth = "ict_auth.cli:run"
+
+[tool.hatch.build.targets.sdist]
+ignore-vcs = true
+include = [
+  "ict_auth/*.py",
+  "ict_auth/browser",
+  "ict_auth/libs",
+]
+
+[tool.hatch.build.targets.wheel]
+ignore-vcs = true
+include = [
+  "ict_auth/*.py",
+  "ict_auth/browser",
+  "ict_auth/libs",
+]
+
+[tool.hatch.version]
+source = "vcs"
+tag-pattern = "^v?(?P<version>.*)$"
+fallback-version = "dev"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "ict_auth/_version.py"
