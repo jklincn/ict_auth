@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       PLAYWRIGHT_BROWSERS_PATH: ict_auth/browser
       CHROME_PATH: ict_auth/browser/chromium_headless_shell-*/chrome-linux/headless_shell
@@ -53,7 +53,7 @@ jobs:
 
   test:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
@@ -77,7 +77,7 @@ jobs:
   publish:
     needs: test
     if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     environment:
       name: pypi
       url: https://pypi.org/p/ict-auth
