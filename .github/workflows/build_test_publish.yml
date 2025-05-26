@@ -35,7 +35,6 @@ jobs:
           uv run -- playwright install --with-deps chromium-headless-shell
           mkdir ict_auth/libs
           lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u > ict_auth/libs/libs.txt
-          lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u | xargs -I{} cp {} ict_auth/libs
           cp /usr/lib/x86_64-linux-gnu/nss/libnssckbi.so ict_auth/libs
           cp /usr/lib/x86_64-linux-gnu/nss/libsoftokn3.so ict_auth/libs
 
@@ -49,7 +48,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ict-auth-dist
-          path: dist/*.whl
+          path: dist
 
   test:
     needs: build
