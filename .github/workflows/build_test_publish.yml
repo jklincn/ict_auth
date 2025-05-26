@@ -10,6 +10,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ict_auth/browser
+      CHROME_PATH: ict_auth/browser/chromium_headless_shell-*/chrome-linux/headless_shell
+      FFMPEG_PATH: ict_auth/browser/ffmpeg-*/ffmpeg-linux
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,18 +37,17 @@ jobs:
           lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u | xargs -I{} cp {} ict_auth/libs
           cp /usr/lib/x86_64-linux-gnu/libnssckbi.so ict_auth/libs
           cp /usr/lib/x86_64-linux-gnu/libsoftokn3.so ict_auth/libs
-        env:
-          PLAYWRIGHT_BROWSERS_PATH: ict_auth/browser
-          CHROME_PATH: ict_auth/browser/chromium_headless_shell-*/chrome-linux/headless_shell
-          FFMPEG_PATH: ict_auth/browser/ffmpeg-*/ffmpeg-linux
 
       - name: Build package
-        run: uv build
+        run: |
+          strip --strip-all ${CHROME_PATH} ${FFMPEG_PATH}
+          rm -f ict_auth/libs/{ld-linux-x86-64.so.2,libc.so.6,libm.so.6}
+          uv build
 
       - uses: actions/upload-artifact@v4
         with:
           name: ict-auth-dist
-          path: dist/*.whl
+          path: dist
 
   test:
     needs: build
@@ -69,7 +72,7 @@ jobs:
       - name: Run tests
         run: ict_auth test
 
-  release:
+  publish:
     needs: test
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
