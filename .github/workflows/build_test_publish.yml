@@ -1,4 +1,4 @@
-name: build_test_release
+name: build_test_publish
 
 on:
   push:
@@ -34,6 +34,7 @@ jobs:
           uv sync --locked
           uv run -- playwright install --with-deps chromium-headless-shell
           mkdir ict_auth/libs
+          lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u > libs.txt
           lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u | xargs -I{} cp {} ict_auth/libs
           cp /usr/lib/x86_64-linux-gnu/libnssckbi.so ict_auth/libs
           cp /usr/lib/x86_64-linux-gnu/libsoftokn3.so ict_auth/libs
@@ -43,6 +44,7 @@ jobs:
           strip --strip-all ${CHROME_PATH} ${FFMPEG_PATH}
           rm -f ict_auth/libs/{ld-linux-x86-64.so.2,libc.so.6,libm.so.6}
           uv build
+          ls -lah dist
 
       - uses: actions/upload-artifact@v4
         with:
