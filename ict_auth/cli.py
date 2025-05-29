@@ -4,7 +4,7 @@ from pathlib import Path
 
 import typer
 
-from . import core, systemd
+from . import core, systemd, ci_test
 from ._version import __version__
 from .logger import logger
 
@@ -60,7 +60,7 @@ def logs() -> None:
 
 @app.command(hidden=True)
 def test() -> None:
-    core.ci_test()
+    ci_test.test()
 
 
 @app.callback(invoke_without_command=True)
@@ -78,7 +78,7 @@ def callback(
         raise typer.Exit()
     if ctx.invoked_subcommand is None:
         try:
-            core.entry()
+            core.main()
         except KeyboardInterrupt:
             print()
 
