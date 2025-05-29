@@ -1,20 +1,23 @@
 # ict_auth/cli.py
-
+import logging
+import shlex
+import sys
 from pathlib import Path
 
 import typer
 
-from . import core, systemd, ci_test
+from . import ci_test, core, systemd
 from ._version import __version__
-from .logger import logger
+from .logger import configure_logging
 
 app = typer.Typer(
-    help="""A command-line tool for ICT network authentication.
-
-Run "ict_auth" without subcommands for login/logout.
-""",
+    help="A command-line tool for ICT network authentication.",
     add_completion=False,
+    pretty_exceptions_enable=False,
 )
+
+configure_logging("cli")
+logger = logging.getLogger("ict_auth")
 
 
 @app.command()
@@ -22,13 +25,14 @@ def enable() -> None:
     """
     Enable the auto reconnection service.
     """
-    # username, password = core.ask_for_account()
+    account = core.ask_for_account()
     systemd.create_service(
         service_name="ict_auth",
-        executable_path=f"/usr/bin/python3 {Path(__file__).parent / 'service.py'}",
+        executable_path=f"{shlex.quote(sys.executable)} -m ict_auth.service",
         description="ICT Network Authentication Service",
         restart_policy="always",
         RestartSec="10min",
+        environment_vars=account,
     )
     systemd.restart_service("ict_auth")
     systemd.enable_service("ict_auth")
@@ -77,10 +81,7 @@ def callback(
         typer.echo({__version__})
         raise typer.Exit()
     if ctx.invoked_subcommand is None:
-        try:
-            core.main()
-        except KeyboardInterrupt:
-            print()
+        core.main()
 
 
 def run():

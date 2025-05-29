@@ -1,15 +1,14 @@
+# ict_auth/service.py
 import logging
+import os
 import signal
 import time
-from pathlib import Path
 
-logging.basicConfig(
-    filename=Path(__file__).parent / "ict_auth.log",
-    level=logging.INFO,
-    format="[%(asctime)s] [%(levelname)s] %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger(__name__)
+from .core import WebManager
+from .logger import configure_logging
+
+configure_logging("service")
+logger = logging.getLogger("ict_auth")
 
 
 def handle_exit(signum, frame):
@@ -17,9 +16,19 @@ def handle_exit(signum, frame):
     exit(0)
 
 
-signal.signal(signal.SIGTERM, handle_exit)
+def main():
+    signal.signal(signal.SIGTERM, handle_exit)
+    logger.info("ICT Auth service started.")
+    username = os.environ.get("username")
+    password = os.environ.get("password")
+    
+    while True:
+        with WebManager() as web:
+            if not web.is_logged_in():
+                logger.info("Connection interrupted. Attempting automatic login.")
+                web.login(username, password)
+        time.sleep(60)
 
-logger.info("ICT Auth service started.")
-while True:
-    logger.info("ICT Auth service is running...")
-    time.sleep(10)
+
+if __name__ == "__main__":
+    main()

@@ -1,3 +1,4 @@
+import logging
 import os
 from pathlib import Path
 from typing import Dict
@@ -6,13 +7,12 @@ from playwright.sync_api import Page, sync_playwright
 from playwright.sync_api import TimeoutError as PlaywrightTimeout
 from rich.prompt import Prompt
 
-from .logger import logger
-
 URL = "https://gw.ict.ac.cn"
+logger = logging.getLogger("ict_auth")
 
 
 class WebManager:
-    def __init__(self, url: str):
+    def __init__(self, url: str = URL):
         self.url = url
         self.page: Page = None
 
@@ -30,7 +30,6 @@ class WebManager:
         os.environ["LD_LIBRARY_PATH"] = str(path / "libs")
 
     def __enter__(self):
-        logger.info("Initializing Runtime...")
         self.env_set()
         self.playwright = sync_playwright().start()
         self.browser = self.playwright.chromium.launch()
@@ -39,8 +38,17 @@ class WebManager:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.browser.close()
-        self.playwright.stop()
+        try:
+            if self.browser:
+                self.browser.close()
+        except Exception:
+            pass
+        finally:
+            try:
+                if self.playwright:
+                    self.playwright.stop()
+            except Exception:
+                pass
 
     def is_logged_in(self) -> bool:
         try:
@@ -112,19 +120,25 @@ def main():
     If not logged in, prompt for username and password.
     If logged in, prompt for logout.
     """
-    with WebManager(URL) as web:
-        if web.is_logged_in():
-            logger.info(
-                "Status: [bold green]Online[/bold green]", extra={"markup": True}
-            )
-            web.print_info()
-            ask_logout = Prompt.ask(
-                "Do you want to log out?", choices=["yes", "no"], default="no"
-            )
-            if ask_logout.lower() == "yes":
-                web.logout()
-        else:
-            logger.info("Status: [bold red]Offline[/bold red]", extra={"markup": True})
-            logger.info("Starting login process...")
-            account = ask_for_account()
-            web.login(account["username"], account["password"])
+    try:
+        logger.info("Initializing Runtime...")
+        with WebManager() as web:
+            if web.is_logged_in():
+                logger.info(
+                    "Status: [bold green]Online[/bold green]", extra={"markup": True}
+                )
+                web.print_info()
+                ask_logout = Prompt.ask(
+                    "Do you want to log out?", choices=["yes", "no"], default="no"
+                )
+                if ask_logout.lower() == "yes":
+                    web.logout()
+            else:
+                logger.info(
+                    "Status: [bold red]Offline[/bold red]", extra={"markup": True}
+                )
+                logger.info("Starting login process...")
+                account = ask_for_account()
+                web.login(account["username"], account["password"])
+    except KeyboardInterrupt:
+        print()

@@ -3,7 +3,8 @@ import os
 from pathlib import Path
 
 from .core import WebManager
-from .logger import logger
+
+logger = logging.getLogger("ict_auth")
 
 TEST_URL = "https://google.com"
 
