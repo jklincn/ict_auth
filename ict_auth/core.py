@@ -1,8 +1,8 @@
 # ict_auth/core.py
-
 import logging
 import os
 from pathlib import Path
+from typing import Dict
 
 from playwright.sync_api import (
     Page,
@@ -11,22 +11,9 @@ from playwright.sync_api import (
 from playwright.sync_api import (
     TimeoutError as PlaywrightTimeout,
 )
-from rich.logging import RichHandler
 from rich.prompt import Prompt
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(levelname)s] %(message)s",
-    handlers=[
-        RichHandler(
-            show_level=False,
-            show_path=False,
-            show_time=False,
-        )
-    ],
-)
-
-log = logging.getLogger("ict_auth")
+from .logger import logger
 
 URL = "https://gw.ict.ac.cn"
 
@@ -61,10 +48,24 @@ def login(page: Page, username: str, password: str) -> None:
     # Confirm login
     try:
         page.locator("#logout.btn-logout").wait_for(state="visible", timeout=2000)
-        log.info("✅ Login successfully")
+        logger.info("✅ Login successfully")
         print_info(page)
     except PlaywrightTimeout:
-        log.error("❌ Login failed")
+        logger.error("❌ Login failed")
+
+
+def ask_for_account() -> Dict[str, str]:
+    """
+    Prompt the user for ICT account.
+    """
+    print("=============================")
+    username = Prompt.ask("Username")
+    password = Prompt.ask("Password", password=True)
+    print("=============================")
+    return {
+        "username": username,
+        "password": password,
+    }
 
 
 def logout(page: Page) -> None:
@@ -79,9 +80,9 @@ def logout(page: Page) -> None:
     # Confirm logout
     try:
         page.locator("#login-account.btn-login").wait_for(state="visible", timeout=2000)
-        log.info("✅ Logout successfully")
+        logger.info("✅ Logout successfully")
     except PlaywrightTimeout:
-        log.error("❌ Logout failed")
+        logger.error("❌ Logout failed")
 
 
 def print_info(page: Page) -> None:
@@ -92,37 +93,46 @@ def print_info(page: Page) -> None:
     usedflow = page.locator("#used-flow.value").inner_text()
     usedtime = page.locator("#used-time.value").inner_text()
     ip = page.locator("#ipv4.value").inner_text()
-    log.info(f"User: {username}")
-    log.info(f"Used flow: {usedflow}")
-    log.info(f"Used time: {usedtime}")
-    log.info(f"IP: {ip}")
+    logger.info(f"User: {username}")
+    logger.info(f"Used flow: {usedflow}")
+    logger.info(f"Used time: {usedtime}")
+    logger.info(f"IP: {ip}")
 
 
-def status(page: Page) -> bool:
+def check_login(page: Page) -> bool:
+    """
+    Check if the user is logged in.
+    Returns True if logged in, False otherwise.
+    """
+    try:
+        page.locator("#logout.btn-logout").wait_for(state="visible", timeout=2000)
+        return True
+    except PlaywrightTimeout:
+        return False
+
+
+def main(page: Page):
     """
     Check the status of the user.
     If not logged in, prompt for username and password.
     If logged in, prompt for logout.
     """
-    try:
-        page.locator("#logout.btn-logout").wait_for(state="visible", timeout=2000)
-        log.info("Status: [bold green]Online[/bold green]", extra={"markup": True})
-
+    if check_login(page):
+        logger.info("Status: [bold green]Online[/bold green]", extra={"markup": True})
         print_info(page)
         ask_logout = Prompt.ask(
             "Do you want to log out?", choices=["yes", "no"], default="no"
         )
         if ask_logout.lower() == "yes":
             logout(page)
-    except PlaywrightTimeout:
-        log.info("Status: [bold red]Offline[/bold red]", extra={"markup": True})
-        log.info("Starting login process...")
-        username = Prompt.ask("Username")
-        password = Prompt.ask("Password", password=True)
-        login(page, username, password)
+    else:
+        logger.info("Status: [bold red]Offline[/bold red]", extra={"markup": True})
+        logger.info("Starting login process...")
+        account = ask_for_account()
+        login(page, account["username"], account["password"])
 
 
-def test() -> None:
+def ci_test() -> None:
     try:
         init()
         with sync_playwright() as p:
@@ -130,22 +140,21 @@ def test() -> None:
             page = browser.new_page()
             page.goto("https://jklincn.com", timeout=5000)
             browser.close()
-
-        log.info("Pass")
+        logger.info("Pass")
     except Exception as e:
-        log.setLevel(logging.DEBUG)
-        log.debug(f"Exception: {e}")
-        log.debug(
+        logger.setLevel(logging.DEBUG)
+        logger.debug(f"Exception: {e}")
+        logger.debug(
             f"PLAYWRIGHT_BROWSERS_PATH = {os.environ.get('PLAYWRIGHT_BROWSERS_PATH')}"
         )
-        log.debug(f"LD_LIBRARY_PATH = {os.environ.get('LD_LIBRARY_PATH')}")
+        logger.debug(f"LD_LIBRARY_PATH = {os.environ.get('LD_LIBRARY_PATH')}")
         whl_files = list(Path("dist").glob("*.whl"))
         for file in whl_files:
-            log.debug(f"whl file: {file} size: {file.stat().st_size} bytes")
+            logger.debug(f"whl file: {file} size: {file.stat().st_size} bytes")
 
         def list_all_files(dir_path: Path, indent: int = 0):
             for item in dir_path.iterdir():
-                log.debug("  " * indent + item.name)
+                logger.debug("  " * indent + item.name)
                 if item.is_dir():
                     list_all_files(item, indent + 1)
 
@@ -153,12 +162,12 @@ def test() -> None:
         exit(1)
 
 
-def main() -> None:
-    log.info("Initializeing Runtime...")
+def entry() -> None:
+    logger.info("Initializeing Runtime...")
     init()
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
         page.goto(URL, wait_until="load", timeout=2000)
-        status(page)
+        main(page)
         browser.close()
