@@ -78,7 +78,7 @@ def callback(
     ),
 ):
     if version:
-        typer.echo({__version__})
+        typer.echo(__version__)
         raise typer.Exit()
     if ctx.invoked_subcommand is None:
         core.main()
