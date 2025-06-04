@@ -37,7 +37,6 @@ jobs:
           lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u > ict_auth/libs/libs.txt
           lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u | xargs -I{} cp {} ict_auth/libs
           cp /usr/lib/x86_64-linux-gnu/nss/* ict_auth/libs
-          cp /usr/lib/x86_64-linux-gnu/libsqlite3.so.* ict_auth/libs
 
       - name: Build package
         run: |
