@@ -36,8 +36,8 @@ jobs:
           mkdir ict_auth/libs
           lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u > ict_auth/libs/libs.txt
           lddtree -l ${CHROME_PATH} ${FFMPEG_PATH} | grep '\.so' | sort -u | xargs -I{} cp {} ict_auth/libs
-          cp /usr/lib/x86_64-linux-gnu/nss/libnssckbi.so ict_auth/libs
-          cp /usr/lib/x86_64-linux-gnu/nss/libsoftokn3.so ict_auth/libs
+          cp /usr/lib/x86_64-linux-gnu/nss/* ict_auth/libs
+          cp /usr/lib/x86_64-linux-gnu/libsqlite3.so.* ict_auth/libs
 
       - name: Build package
         run: |
@@ -58,7 +58,7 @@ jobs:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
     container:
-      image: python:${{ matrix.python-version }}-slim
+      image: python:${{ matrix.python-version }}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -71,6 +71,8 @@ jobs:
 
       - name: Run tests
         run: ict_auth test
+        env:
+          DEBUG: pw:browser*
 
   publish:
     needs: test
