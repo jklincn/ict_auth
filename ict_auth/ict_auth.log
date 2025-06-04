@@ -1,9 +1,36 @@
-[2025-05-29 08:15:20] [INFO] ICT Auth service started.
-[2025-05-29 08:15:20] [INFO] ICT Auth service is running...
-[2025-05-29 08:15:30] [INFO] ICT Auth service is running...
-[2025-05-29 08:15:36] [INFO] ICT Auth service stopped.
-[2025-05-29 08:51:32] [INFO] ICT Auth service started.
-[2025-05-29 08:51:32] [INFO] ICT Auth service is running...
-[2025-05-29 08:51:42] [INFO] ICT Auth service is running...
-[2025-05-29 08:51:52] [INFO] ICT Auth service is running...
-[2025-05-29 08:51:57] [INFO] ICT Auth service stopped.
+[2025-05-29 11:33:32] [INFO] ICT Auth service started.
+[2025-05-29 11:33:32] [INFO] Initializing Runtime...
+[2025-05-29 11:33:35] [INFO] Connection interrupted. Attempting automatic login.
+[2025-05-29 11:33:36] [INFO] ✅ Login successfully
+[2025-05-29 11:33:36] [INFO] User: linjieke2024
+[2025-05-29 11:33:36] [INFO] Used flow: 36.93 GB
+[2025-05-29 11:33:36] [INFO] Used time: 2106小时45分21秒
+[2025-05-29 11:33:36] [INFO] IP: 10.156.160.169
+[2025-05-29 11:33:46] [INFO] Initializing Runtime...
+[2025-05-29 11:33:58] [INFO] Initializing Runtime...
+[2025-05-29 11:34:11] [INFO] Initializing Runtime...
+[2025-05-29 11:34:24] [INFO] Initializing Runtime...
+[2025-05-29 11:34:28] [INFO] ICT Auth service stopped.
+[2025-05-29 11:35:28] [INFO] ICT Auth service started.
+[2025-05-29 11:36:34] [INFO] Connection interrupted. Attempting automatic login.
+[2025-05-29 11:36:35] [INFO] ✅ Login successfully
+[2025-05-29 11:36:35] [INFO] User: linjieke2024
+[2025-05-29 11:36:35] [INFO] Used flow: 36.93 GB
+[2025-05-29 11:36:35] [INFO] Used time: 2106小时47分35秒
+[2025-05-29 11:36:35] [INFO] IP: 10.156.160.169
+[2025-05-29 11:39:25] [INFO] ICT Auth service stopped.
+[2025-05-30 05:05:44] [INFO] ICT Auth service started.
+[2025-05-30 05:05:47] [INFO] Connection interrupted. Attempting automatic login.
+[2025-05-30 05:05:48] [INFO] ✅ Login successfully
+[2025-05-30 05:05:48] [INFO] User: linjieke2024
+[2025-05-30 05:05:48] [INFO] Used flow: 38.25 GB
+[2025-05-30 05:05:48] [INFO] Used time: 2215小时35分14秒
+[2025-05-30 05:05:48] [INFO] IP: 10.156.160.169
+[2025-05-30 05:33:28] [INFO] ICT Auth service stopped.
+[2025-05-30 06:45:23] [INFO] ICT Auth service started.
+[2025-05-30 06:45:36] [INFO] ICT Auth service stopped.
+[2025-05-31 10:10:42] [INFO] ICT Auth service started.
+[2025-05-31 11:50:25] [INFO] ICT Auth service stopped.
+[2025-06-01 14:18:31] [INFO] ICT Auth service started.
+[2025-06-01 14:20:31] [INFO] ICT Auth service stopped.
+[2025-06-04 07:03:45] [INFO] ICT Auth service started.
