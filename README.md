@@ -57,6 +57,9 @@ ict_auth
 
 ```
 ict_auth enable
+
+# 让用户即使在没有登录的情况下，依然能够保持后台的服务运行
+loginctl enable-linger $USER
 ```
 
 使用 `disable` 取消持久连接（这会卸载系统服务并清空账号信息）
