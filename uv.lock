@@ -95,8 +95,8 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "playwright", specifier = ">=1.48.0" },
-    { name = "typer", specifier = ">=0.15.4" },
+    { name = "playwright", specifier = "==1.52.0" },
+    { name = "typer", specifier = "==0.15.4" },
 ]
 
 [[package]]
