@@ -9,6 +9,7 @@ from rich.prompt import Prompt
 
 URL = "https://gw.ict.ac.cn"
 logger = logging.getLogger("ict_auth")
+debug = os.getenv("DEBUG", "0")
 
 
 class WebManager:
@@ -72,8 +73,12 @@ class WebManager:
             )
             logger.info("✅ Login successfully")
             self.print_info()
-        except PlaywrightTimeout:
-            logger.error("❌ Login failed")
+        except PlaywrightTimeout as e:
+            logger.error("❌ Login failed.")
+            if debug == "1":
+                self.page.screenshot(path="screenshot.png")
+            logger.debug("Screenshot saved as screenshot.png")
+            logger.debug(f"Login failed with error: {e}", exc_info=True)
 
     def logout(self):
         btn_logout = self.page.locator("#logout.btn-logout")

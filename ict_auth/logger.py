@@ -1,6 +1,7 @@
 # ict_auth/logger.py
 
 import logging
+import os
 from pathlib import Path
 from typing import Literal
 
@@ -9,7 +10,9 @@ from rich.logging import RichHandler
 
 def configure_logging(mode: Literal["cli", "service"]):
     root_logger = logging.getLogger("ict_auth")
-    root_logger.setLevel(logging.INFO)
+    debug = os.getenv("DEBUG", "0")
+    level = logging.DEBUG if debug == "1" else logging.INFO
+    root_logger.setLevel(level)
 
     if root_logger.hasHandlers():
         return
@@ -19,6 +22,7 @@ def configure_logging(mode: Literal["cli", "service"]):
             show_level=False,
             show_path=False,
             show_time=False,
+            level=level,
         )
         formatter = logging.Formatter("[%(levelname)s] %(message)s")
     else:

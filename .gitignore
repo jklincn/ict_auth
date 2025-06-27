@@ -15,3 +15,6 @@ _version.py
 # browser and libs
 ict_auth/browser
 ict_auth/libs
+
+# local log
+ict_auth/ict_auth.log

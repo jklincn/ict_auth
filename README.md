@@ -19,13 +19,24 @@ pip install ict-auth
 
 > 常见问题：
 >
-> 1. 如果服务器上没有安装 pip，可以尝试以下命令安装 pip：
+> 1. 如果服务器上没有安装 pip，可以尝试运行以下命令来获取 pip。
 >
->    ```
->    python3 -m ensurepip --default-pip
->    ```
+>    - 方法一（ensurepip）：
+>
+>      ```
+>      python -m ensurepip --upgrade
+>      ```
+>
+>    - 方法二（get-pip.py）
+>
+>      ```
+>      curl -O https://bootstrap.pypa.io/get-pip.py
+>      python get-pip.py
+>      ```
 >
 > 2. 如果服务器正确连接网线但没有获取到公网 ipv6 地址，可以在本地[手动下载 whl 安装包](https://pypi.org/project/ict-auth/#files)再使用 scp 拷贝至远程服务器
+>
+> 3. 如果安装后找不到 `ict_auth` 命令，可以尝试重新登录或根据实际添加路径到环境变量中。
 
 ## 使用
 
@@ -48,6 +59,9 @@ ict_auth
 
 ```
 ict_auth enable
+
+# 让用户即使在没有登录的情况下，依然能够保持后台的服务运行
+loginctl enable-linger $USER
 ```
 
 使用 `disable` 取消持久连接（这会卸载系统服务并清空账号信息）

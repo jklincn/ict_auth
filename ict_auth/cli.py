@@ -1,5 +1,6 @@
 # ict_auth/cli.py
 import logging
+import os
 import shlex
 import sys
 from pathlib import Path
@@ -18,6 +19,7 @@ app = typer.Typer(
 
 configure_logging("cli")
 logger = logging.getLogger("ict_auth")
+debug = os.getenv("DEBUG", "0")
 
 
 @app.command()
@@ -26,6 +28,8 @@ def enable() -> None:
     Enable the auto reconnection service.
     """
     account = core.ask_for_account()
+    if debug == "1":
+        account["debug"] = "1"
     systemd.create_service(
         service_name="ict_auth",
         executable_path=f"{shlex.quote(sys.executable)} -m ict_auth.service",
