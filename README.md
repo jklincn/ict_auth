@@ -35,6 +35,8 @@ pip install ict-auth
 >      ```
 >
 > 2. 如果服务器正确连接网线但没有获取到公网 ipv6 地址，可以在本地[手动下载 whl 安装包](https://pypi.org/project/ict-auth/#files)再使用 scp 拷贝至远程服务器
+>
+> 3. 如果安装后找不到 `ict_auth` 命令，可以尝试重新登录或根据实际添加路径到环境变量中。
 
 ## 使用
 
