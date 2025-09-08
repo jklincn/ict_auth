@@ -5,8 +5,8 @@
 set -e
 
 FRPC_PATH="$HOME/.local/bin/frpc"
-FRPC_URL="https://nya.globalslb.net/natfrp/client/frpc/0.51.0-sakura-9.3/frpc_linux_amd64"
-EXPECTED_MD5="23ee541dfb197cdd52f716542a89d204"
+FRPC_URL="https://nya.globalslb.net/natfrp/client/frpc/0.51.0-sakura-12.3/frpc_linux_amd64"
+EXPECTED_MD5="8ba7dcde07b1181e4f011e011321c6f8"
 
 mkdir -p "$HOME/.local/bin"
 
