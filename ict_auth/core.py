@@ -84,7 +84,7 @@ class WebManager:
         btn_logout = self.page.locator("#logout.btn-logout")
         btn_logout.scroll_into_view_if_needed()
         btn_logout.click()
-        self.page.locator(".btn-confirm").click()
+        self.page.get_by_role("button", name="确认").click()
 
         try:
             self.page.locator("#login-account.btn-login").wait_for(
